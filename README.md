@@ -46,7 +46,7 @@ Detailed setup instructions are provided to get the application running locally 
 
 ___
 env/ folder -- with environment variables
-env/.env.app and env/.env.db
+env/.env.app and env/.env.mysql .env.redis
 
 username, password, and database name will be identical in each file
 ___
@@ -61,7 +61,7 @@ ___
 | DB_PASS  | value matches (.app .db) |
 | PORT     | 3000                    |
 
-### Redis Environment Variables
+### Redis Environment Variables (.env.redis)
 
 | Variable   | Value  |
 |------------|--------|
@@ -69,7 +69,7 @@ ___
 | REDIS_HOST | redis |
 | REDIS_PASSWORD | secret value |
 
-### MySQL Database Environment Variables (.env.db)
+### MySQL Database Environment Variables (.env.mysql)
 
 | Variable              | Value          |
 |-----------------------|----------------|
@@ -154,8 +154,6 @@ This project aims to showcase the potential of modern web technologies in creati
 | `make status`   | Displays the status of Docker Compose services.                |
 | `make build`    | Builds the Docker Compose services.                            |
 | `make run`      | Runs the Docker Compose services in interactive mode.          |
-| `make it-backend` | Starts an interactive terminal in the backend service.         |
-| `make it-frontend` | Starts an interactive terminal in the frontend service.       |
 | `make exec`     | Executes a command in the Docker Compose service.              |
 | `make stop`     | Stops the Docker Compose services.                             |
 | `make clean`    | Removes Docker Compose containers and images.                   |
@@ -190,5 +188,65 @@ This project aims to showcase the potential of modern web technologies in creati
 ## Directory File Tree
 
 ```bash
+.
+├── Makefile
+├── README.md
+├── backend
+│   ├── Docker
+│   │   └── Dockerfile
+│   ├── api
+│   │   └── routes
+│   │       ├── destinations.js
+│   │       └── routes.js
+│   ├── config
+│   │   ├── mysql
+│   │   │   └── my.cnf
+│   │   ├── redis
+│   │   │   └── redis.conf
+│   │   └── swaggerConfig.js
+│   ├── database
+│   │   ├── galactic_market_schema.sql
+│   │   ├── init.sql
+│   │   └── run_sql_files.sh
+│   ├── datasets
+│   ├── dump.rdb
+│   ├── env
+│   ├── make.log
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   │   ├── db.js
+│   │   ├── redis.js
+│   │   ├── server.js
+│   │   └── utils
+│   │       ├── logger.js
+│   │       └── readCSV.js
+│   ├── start.sh
+│   └── test
+│       └── api.test.js
+├── docker-compose.yml
+├── frontend
+│   ├── Docker
+│   │   └── Dockerfile
+│   ├── README.md
+│   ├── astro.config.mjs
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   └── favicon.svg
+│   ├── src
+│   │   ├── components
+│   │   │   └── Card.astro
+│   │   ├── env.d.ts
+│   │   ├── layouts
+│   │   │   └── Layout.astro
+│   │   └── pages
+│   │       └── index.astro
+│   ├── start.sh
+│   └── tsconfig.json
+├── make.log
+└── public
+    └── UML
 
+24 directories, 36 files
 ```
