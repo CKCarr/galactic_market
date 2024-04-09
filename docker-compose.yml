@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend  # Build the backend service
+      dockerfile: ./Docker/Dockerfile  # Path to the Dockerfile
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    env_file:
+      - ./backend/env/.env.app
+      - ./backend/env/.env.mysql
+      - ./backend/env/.env.redis
+    volumes:
+      - ./backend:/galactic_destinations/backend  # Mount the backend code
+    depends_on:
+      - mysql
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "node -e 'require(\"http\").createServer((req, res) => res.end()).listen(3000)'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./backend/env/.env.mysql
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./backend/config/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+  redis:
+    image: redis:6.0
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./backend/env/.env.redis
+    volumes:
+      - redisdata:/data
+      - ./backend/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+  frontend:
+    build:
+      context: ./frontend  # Build the frontend service
+      dockerfile: ./Docker/Dockerfile  # Path to the Dockerfile
+    ports:
+      - "4321:4321"
+    volumes:
+      - ./frontend:/galactic_destinations/frontend  # Mount the frontend cod
+
+volumes:
+  mysqldata: {}  # MySQL data volume
+  redisdata: {}  # Redis data volume
