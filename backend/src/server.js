@@ -6,7 +6,7 @@ import express from 'express';
 import apiRoutes from '../api/routes/routes.js';
 import { redisClient, initializeRedis } from './redis.js';
 import swaggerUI from 'swagger-ui-express';
-import swaggerSpecs from '../config/swaggerConfig.js';
+import swaggerSpecs from '../config/swagger/swaggerConfig.js';
 // Swagger definition in a separate file for better organization
 // '/api-docs' is the endpoint where Swagger UI will be available. 
 //API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.
