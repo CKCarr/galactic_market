@@ -16,6 +16,6 @@ const swaggerDefinition = {
 };
 
 // Options for the swagger docs - create a new instance of swaggerJsdoc
-const swaggerSpec = swaggerJsdoc(swaggerDefinition);
+const swaggerSpecs = swaggerJsdoc(swaggerDefinition);
 
-export default swaggerSpec;
+export default swaggerSpecs;
