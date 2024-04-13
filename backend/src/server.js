@@ -3,12 +3,16 @@
 // Use redis as middleware for caching routes
 // Start the server
 import express from 'express';
-import apiRoutes from '../api/routes/routes.js';
-import { redisClient, initializeRedis } from './redis.js';
+import { redisClient } from './redis.js';
 import swaggerUI from 'swagger-ui-express';
 import swaggerSpecs from '../config/swagger/swaggerConfig.js';
-// Swagger definition in a separate file for better organization
-// '/api-docs' is the endpoint where Swagger UI will be available. 
+import dotenv from 'dotenv';
+import router from '../api/routes/routes.js';
+import loginRoute from '../api/routes/login.js';
+import registerRoute from '../api/routes/register.js';
+
+dotenv.config({ path: '../env/.env.app' });
+
 //API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.
 
 // create an instance of express
@@ -22,15 +26,6 @@ console.log(process.env.HOST);
 // Check if port is set correctly
 console.log(process.env.PORT);
 
-// Swagger definition in a separate file for better organization
-// '/api-docs' is the endpoint where Swagger UI will be available. 
-//API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.
-
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
-
-// Use the imported routes with Express app
-app.use('/', apiRoutes);
-
 // Middleware for caching with Redis
 app.use((req, res, next) => {
     const key = req.originalUrl;
@@ -38,7 +33,7 @@ app.use((req, res, next) => {
     redisClient.get(key, (err, data) => {
         if (err) {
             console.error(err);
-            return next(); // Go to the next middleware if there is an error without sending a response
+            return next();
         }
         if (data) {
             // If the data is found in Redis, send it as a response
@@ -46,17 +41,27 @@ app.use((req, res, next) => {
             res.setHeader('Content-Type', 'application/json');
             return res.send(data);
         } else {
-            // If the data is not found in Redis, go to the next middleware
-            next();
+            // If the data is not found in Redis, call the next middleware
+            return next();
         }
     });
 });
 
-// Initialize Redis connection
-initializeRedis();
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
+
+app.use(express.json());
+
+// Use the imported routes with Express app
+app.use('/', router);
+
+app.use('/register', registerRoute);
+app.use('/login', loginRoute);
 
 // Start the server
 app.listen(PORT, HOST, () => {
     console.log(`Server up and running! Listening on http://${HOST}:${PORT}`);
 });
 // The server is now running on http://localhost:3000/. You can test the API endpoints using Postman or any other API testing tool.
+// Swagger definition in a separate file for better organization
+// '/api-docs' is the endpoint where Swagger UI will be available. 
+//API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.

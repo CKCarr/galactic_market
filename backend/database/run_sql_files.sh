@@ -1,15 +1,22 @@
 #!/bin/bash
 
-# Load environment variables from the .env file
-set -o allexport
-source /env/.env.app
-set +o allexport
+# Load MySQL environment variables from the specified .env file
+set -a  # automatically export all variables
+source backend/env/.env.mysql
+set +a
 
-# Function to run SQL files
+# Execute SQL commands to create database and configure privileges
+mysql -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD -e "
+CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
+GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
+FLUSH PRIVILEGES;
+"
+
+# Function to run SQL files with MySQL
 run_sql_file() {
     local file_path=$1
     echo "Executing SQL file: $file_path"
-    psql -U $DB_USER -d $DB_NAME -h $DB_HOST -p $DB_PORT -f $file_path
+    mysql -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < $file_path
     if [ $? -eq 0 ]; then
         echo "SQL file executed successfully: $file_path"
     else
@@ -18,11 +25,7 @@ run_sql_file() {
     fi
 }
 
-# Run jop_schema.sql to create tables
-run_sql_file "./database/galactic_market_schema.sql"
+# Run SQL file to create tables
+run_sql_file "./backend/database/galactic_market_schema.sql"
 
-echo "Tables created successfully."
-
-# If tables are already created
-
-echo "All SQL files executed successfully."
+echo "Database setup completed successfully."
