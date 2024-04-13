@@ -26,6 +26,6 @@ run_sql_file() {
 }
 
 # Run SQL file to create tables
-run_sql_file "./backend/database/galactic_market_schema.sql"
+run_sql_file "./galactic_market_schema.sql"
 
 echo "Database setup completed successfully."

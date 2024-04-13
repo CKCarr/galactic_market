@@ -3,18 +3,17 @@
 // Use redis as middleware for caching routes
 // Start the server
 import express from 'express';
-import { redisClient } from './redis.js';
+// import { redisClient } from './redis.js'
 import swaggerUI from 'swagger-ui-express';
 import swaggerSpecs from '../config/swagger/swaggerConfig.js';
 import dotenv from 'dotenv';
+// import routes for the application
 import router from '../api/routes/routes.js';
 import loginRoute from '../api/routes/login.js';
 import registerRoute from '../api/routes/register.js';
 
+
 dotenv.config({ path: '../env/.env.app' });
-
-//API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.
-
 // create an instance of express
 const app = express();
 
@@ -26,32 +25,33 @@ console.log(process.env.HOST);
 // Check if port is set correctly
 console.log(process.env.PORT);
 
-// Middleware for caching with Redis
-app.use((req, res, next) => {
-    const key = req.originalUrl;
+// // Middleware for caching with Redis
+// app.use((req, res, next) => {
+//     const key = req.originalUrl;
 
-    redisClient.get(key, (err, data) => {
-        if (err) {
-            console.error(err);
-            return next();
-        }
-        if (data) {
-            // If the data is found in Redis, send it as a response
-            console.log('Data from Redis: ');
-            res.setHeader('Content-Type', 'application/json');
-            return res.send(data);
-        } else {
-            // If the data is not found in Redis, call the next middleware
-            return next();
-        }
-    });
-});
+//     redisClient.get(key, (err, data) => {
+//         if (err) {
+//             console.error(err);
+//             return next();
+//         }
+//         if (data) {
+//             // If the data is found in Redis, send it as a response
+//             console.log('Data from Redis: ');
+//             res.setHeader('Content-Type', 'application/json');
+//             return res.send(data);
+//         } else {
+//             // If the data is not found in Redis, call the next middleware
+//             return next();
+//         }
+//     });
+// });
 
+// swagger route for application
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
 
 app.use(express.json());
 
-// Use the imported routes with Express app
+// use the route created in routes.js
 app.use('/', router);
 
 app.use('/register', registerRoute);
