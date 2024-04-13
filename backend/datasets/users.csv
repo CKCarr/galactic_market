@@ -1,1 +1,6 @@
-user_id, username, email, password
+user_id,username,email,password
+1,Galaxy_Explorer,galaxy_explorer_1@email.com,GEpass1word
+2,Star_Traveler,star_traveler_2@email.com,STpass2word
+3,Cosmic_Wanderer,cosmic_wanderer_3@email.com,CWpass3word
+4,Space_Voyager,space_voyager_4@email.com,SVpass4word
+5,Astro_Pioneer,astro_pioneer_5@email.com,APpass5word
