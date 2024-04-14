@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import router from '../api/routes/routes.js';
 import loginRoute from '../api/routes/login.js';
 import registerRoute from '../api/routes/register.js';
+/* import destRouter from '../api/routes/destinations.js'; */
 
 
 dotenv.config({ path: '../env/.env.app' });
@@ -56,6 +57,9 @@ app.use('/', router);
 
 app.use('/register', registerRoute);
 app.use('/login', loginRoute);
+/* 
+app.use('/destinations', destRouter);
+app.use('/destinations_id', destRouter); */
 
 // Start the server
 app.listen(PORT, HOST, () => {

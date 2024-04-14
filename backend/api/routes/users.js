@@ -1,40 +1,44 @@
-// backend/api/routes/travelers.js
 const express = require('express');
 const router = express.Router();
+import readCSV from '../../utils/readCSV.js';
+let users = [];
 
-// Mock data for demonstration
-let travelers = [
-    { traveler_id: 1, first_name: 'John', last_name: 'Doe', username: 'johndoe', email: 'john@example.com', password: 'hashed_password' },
-    { traveler_id: 2, first_name: 'Jane', last_name: 'Doe', username: 'janedoe', email: 'jane@example.com', password: 'hashed_password' }
-];
+readCSV( '../../datasets/users.csv')
+    .then(data => {
+        users = data;
+        console.log('Users loaded successfully');
+    })
+    .catch(err => {
+        console.error('Failed to load users from CSV:', err);
+    });
 
-// GET /travelers - Retrieve a list of all travelers
+// GET /users - Retrieve a list of all users
 /**
  * @swagger
- * /travelers:
+ * /users:
  *   get:
- *     summary: Retrieve a list of all travelers
- *     tags: [Travelers]
+ *     summary: Retrieve a list of all users
+ *     tags: [Users]
  *     responses:
  *       200:
- *         description: A list of travelers
+ *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Traveler'
+ *                 $ref: '#/components/schemas/User'
  */
 router.get('/', (req, res) => {
-    res.json(travelers);
+    res.json(users);
 });
 
-// POST /travelers - Create a new traveler
+// POST /users - Create a new user
 /**
  * @swagger
  * components:
  *   schemas:
- *     Traveler:
+ *     User:
  *       type: object
  *       required:
  *         - first_name
@@ -43,26 +47,26 @@ router.get('/', (req, res) => {
  *         - email
  *         - password
  *       properties:
- *         traveler_id:
+ *         user_id:
  *           type: integer
- *           description: The auto-generated id of the traveler
+ *           description: The auto-generated id of the user
  *         first_name:
  *           type: string
- *           description: The first name of the traveler
+ *           description: The first name of the user
  *         last_name:
  *           type: string
- *           description: The last name of the traveler
+ *           description: The last name of the user
  *         username:
  *           type: string
- *           description: The username of the traveler
+ *           description: The username of the user
  *         email:
  *           type: string
- *           description: The email of the traveler
+ *           description: The email of the user
  *         password:
  *           type: string
- *           description: The encrypted password of the traveler
+ *           description: The encrypted password of the user
  *       example:
- *         traveler_id: 1
+ *         user_id: 1
  *         first_name: John
  *         last_name: Doe
  *         username: johndoe
@@ -71,123 +75,122 @@ router.get('/', (req, res) => {
  */
 router.post('/', (req, res) => {
     const { first_name, last_name, username, email, password } = req.body;
-    const newTraveler = {
-        traveler_id: travelers.length + 1, // simplistic approach for id
+    const newUser = {
+        user_id: users.length + 1,
         first_name,
         last_name,
         username,
         email,
-        password // in production, ensure the password is hashed before storing
+        password
     };
-    travelers.push(newTraveler);
-    res.status(201).send(newTraveler);
+    users.push(newUser);
+    res.status(201).send(newUser);
 });
 
-// GET /travelers/{traveler_id} - Retrieve details about a specific traveler
+// GET /users/{user_id} - Retrieve details about a specific user
 /**
  * @swagger
- * /travelers/{traveler_id}:
+ * /users/{user_id}:
  *   get:
- *     summary: Retrieve details about a specific traveler
- *     tags: [Travelers]
+ *     summary: Retrieve details about a specific user
+ *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: traveler_id
+ *         name: user_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The id of the traveler to retrieve
+ *         description: The id of the user to retrieve
  *     responses:
  *       200:
- *         description: Detailed information about a traveler
+ *         description: Detailed information about a user
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Traveler'
+ *               $ref: '#/components/schemas/User'
  *       404:
- *         description: Traveler not found
+ *         description: User not found
  */
-router.get('/:traveler_id', (req, res) => {
-    const traveler = travelers.find(t => t.traveler_id === parseInt(req.params.traveler_id));
-    if (traveler) {
-        res.json(traveler);
+router.get('/:user_id', (req, res) => {
+    const user = users.find(u => u.user_id === parseInt(req.params.user_id));
+    if (user) {
+        res.json(user);
     } else {
-        res.status(404).send('Traveler not found');
+        res.status(404).send('User not found');
     }
 });
 
-// PUT /travelers/{traveler_id} - Update details of a specific traveler
+// PUT /users/{user_id} - Update details of a specific user
 /**
  * @swagger
- * /travelers/{traveler_id}:
+ * /users/{user_id}:
  *   put:
- *     summary: Update details of a specific traveler
- *     tags: [Travelers]
+ *     summary: Update details of a specific user
+ *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: traveler_id
+ *         name: user_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The id of the traveler to update
+ *         description: The id of the user to update
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Traveler'
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
- *         description: Traveler updated successfully
+ *         description: User updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Traveler'
+ *               $ref: '#/components/schemas/User'
  *       404:
- *         description: Traveler not found
+ *         description: User not found
  */
-router.put('/:traveler_id', (req, res) => {
-    let traveler = travelers.find(t => t.traveler_id === parseInt(req.params.traveler_id));
-    if (traveler) {
-        traveler.first_name = req.body.first_name || traveler.first_name;
-        traveler.last_name = req.body.last_name || traveler.last_name;
-        traveler.username = req.body.username || traveler.username;
-        traveler.email = req.body.email || traveler.email;
-        traveler.password = req.body.password || traveler.password; // remember to hash new passwords
-        res.send(traveler);
+router.put('/:user_id', (req, res) => {
+    let user = users.find(u => u.user_id === parseInt(req.params.user_id));
+    if (user) {
+        user.first_name = req.body.first_name || user.first_name;
+        user.last_name = req.body.last_name || user.last_name;
+        user.username = req.body.username || user.username;
+        user.email = req.body.email || user.email;
+        user.password = req.body.password || user.password;
+        res.send(user);
     } else {
-        res.status(404).send('Traveler not found');
+        res.status(404).send('User not found');
     }
 });
 
-// DELETE /travelers/{traveler_id} - Delete a specific traveler
+// DELETE /users/{user_id} - Delete a specific user
 /**
  * @swagger
- * /travelers/{traveler_id}:
+ * /users/{user_id}:
  *   delete:
- *     summary: Delete a specific traveler
- *     tags: [Travelers]
+ *     summary: Delete a specific user
+ *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: traveler_id
+ *         name: user_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The id of the traveler to delete
+ *         description: The id of the user to delete
  *     responses:
  *       204:
- *         description: Traveler deleted successfully
+ *         description: User deleted successfully
  *       404:
- *         description: Traveler not found
+ *         description: User not found
  */
-
-router.delete('/:traveler_id', (req, res) => {
-    const index = travelers.findIndex(t => t.traveler_id === parseInt(req.params.traveler_id));
+router.delete('/:user_id', (req, res) => {
+    const index = users.findIndex(u => u.user_id === parseInt(req.params.user_id));
     if (index >= 0) {
-        travelers.splice(index, 1);
-        res.status(204).send();
+        users.splice(index, 1);
+        res.sendStatus(204);
     } else {
-        res.status(404).send('Traveler not found');
+        res.status(404).send('User not found');
     }
 });
 

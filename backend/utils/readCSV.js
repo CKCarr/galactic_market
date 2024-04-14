@@ -4,11 +4,18 @@ import { parse } from 'csv-parse';
 
 // Helper function to read and parse CSV file asynchronously
 export const readCSV = (filePath) => {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
     return new Promise((resolve, reject) => {
-        parse(fileContent, { columns: true, skip_empty_lines: true }, (err, records) => {
-            if (err) reject(err);
-            else resolve(records);
+        fs.readFile(filePath, 'utf8', (readErr, fileContent) => {
+            if (readErr) {
+                reject(readErr);
+                return;
+            }
+            parse(fileContent, { columns: true, skip_empty_lines: true }, (parseErr, records) => {
+                if (parseErr) reject(parseErr);
+                else resolve(records);
+            });
         });
     });
 };
+export default readCSV;
+javascript
