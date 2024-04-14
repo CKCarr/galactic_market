@@ -16,6 +16,10 @@ else
     # If a command is provided (e.g., when using `docker exec`, 'exec-cmd'), execute it
     exec "$@"
 fi
+
+# Run database setup script
+# docker exec -i galactic_destinations_mysql_1 mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < ./backend/config/mysql/init.sql &
+
 # Start the backend with inspect mode
 npm run dev
 

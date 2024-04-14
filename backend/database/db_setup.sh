@@ -1,8 +1,11 @@
 #!/bin/bash
+# db_setup.sh - /backend/database/db_setup.sh
 
 # Load MySQL environment variables from the specified .env file
 set -a  # automatically export all variables
-source backend/env/.env.mysql
+source ./env/.env.redis
+source ./env/.env.app
+source ./env/.env.db
 set +a
 
 # Execute SQL commands to create database and configure privileges
@@ -25,7 +28,8 @@ run_sql_file() {
     fi
 }
 
-# Run SQL file to create tables
-run_sql_file "./galactic_market_schema.sql"
+run_sql_file ./config/mysql/init.sql
+
+node CSV_to_SQL.js
 
 echo "Database setup completed successfully."
