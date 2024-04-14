@@ -5,15 +5,15 @@ services:
     build:
       context: ./backend
       dockerfile: ./Docker/Dockerfile
-    ports:
-      - "3000:3000"
-      - "9229:9229"
     env_file:
       - ./backend/env/.env.app
       - ./backend/env/.env.mysql
       - ./backend/env/.env.redis
     volumes:
       - ./backend:/galactic_destinations/backend
+    ports:
+      - "3000:3000"
+      - "9229:9229"
     depends_on:
       - mysql
       - redis
@@ -31,13 +31,14 @@ services:
 
   mysql:
     image: mysql:8.0
-    ports:
-      - "3306:3306"
     env_file:
       - ./backend/env/.env.mysql
+    ports:
+      - "3306:3306"
     volumes:
       - mysqldata:/var/lib/mysql
       - ./backend/config/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./backend/config/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
@@ -48,13 +49,13 @@ services:
 
   redis:
     image: redis:6.0
-    ports:
-      - "6379:6379"
     env_file:
       - ./backend/env/.env.redis
     volumes:
       - redisdata:/data
       - ./backend/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s

@@ -26,7 +26,13 @@ mysql_db.connect((err) => {
     console.error('Error connecting to the database: ', err);
     return;
   }
+
   console.log('Connected to the database!');
+});
+
+// Handle MySQL connection errors
+connection.on('error', (err) => {
+  console.error('MySQL connection error:', err);
 });
 
 export default mysql_db;
