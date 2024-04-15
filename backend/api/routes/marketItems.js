@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const marketRoute= express.Router();
 
 // GET all market items
