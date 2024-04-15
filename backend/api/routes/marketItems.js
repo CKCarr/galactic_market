@@ -139,7 +139,7 @@ marketRoute.put('/market-items/:id', async (req, res) => {
 });
 
 
-//schema
+//schema for market items
 /**
  * @swagger
  * components:

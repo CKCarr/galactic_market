@@ -18,7 +18,7 @@ const destRoute = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Destination'
  */
-destRoute.get('/destination', async (req, res) => {
+destRoute.get('/destinations', async (req, res) => {
     try {
         const [destinations] = await mysql_db.query('SELECT * FROM Destinations');
         if (destinations.length > 0) {
@@ -49,7 +49,7 @@ destRoute.get('/destination', async (req, res) => {
  *       201:
  *         description: Destination created successfully
  */
-destRoute.post('/destination', async (req, res) => {
+destRoute.post('/destinations', async (req, res) => {
     const { name, description, image_url, price } = req.body;
     try {
         const [result] = await mysql_db.query('INSERT INTO Destinations (name, description, image_url, price) VALUES (?, ?, ?, ?)', [name, description, image_url, price]);
@@ -80,7 +80,7 @@ destRoute.post('/destination', async (req, res) => {
  *       404:
  *         description: Destination not found
  */
-destRoute.get('/:destination_id', async (req, res) => {
+destRoute.get('/destinations', async (req, res) => {
     try {
         const [destinations] = await mysql_db.query('SELECT * FROM Destinations WHERE destination_id = ?', [req.params.destination_id]);
         const destination = destinations[0];
@@ -125,7 +125,7 @@ destRoute.get('/:destination_id', async (req, res) => {
  *       404:
  *         description: Destination not found
  */
-destRoute.put('/:destination_id', async (req, res) => {
+destRoute.put('/destinations', async (req, res) => {
     const { name, description, image_url, price } = req.body;
     try {
         const [result] = await mysql_db.query('UPDATE Destinations SET name = ?, description = ?, image_url = ?, price = ? WHERE destination_id = ?', [name, description, image_url, price, req.params.destination_id]);
@@ -141,7 +141,7 @@ destRoute.put('/:destination_id', async (req, res) => {
 });
 
 
-// schema
+// schema for destinations
 /**
  * @swagger
  * components:

@@ -1,38 +1,6 @@
 const express = require('express');
 const userRoute = express.Router();
 
-//schema
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       required:
- *         - user_id
- *         - username
- *         - email
- *         - password
- *       properties:
- *         user_id:
- *           type: integer
- *           description: The auto-generated ID of the user.
- *         username:
- *           type: string
- *           description: The username of the user, used for logging in.
- *         email:
- *           type: string
- *           description: The email address of the user, must be unique.
- *         password:
- *           type: string
- *           description: The hashed password of the user.
- *       example:
- *         user_id: 1
- *         username: 'Galaxy_Explorer'
- *         email: 'galaxy_explorer_1@email.com'
- *         password: 'GEpass1word'
- */
-
 
 //retrieves users
 /**
@@ -182,5 +150,38 @@ userRoute.get('/session', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+//schema for users
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - user_id
+ *         - username
+ *         - email
+ *         - password
+ *       properties:
+ *         user_id:
+ *           type: integer
+ *           description: The auto-generated ID of the user.
+ *         username:
+ *           type: string
+ *           description: The username of the user, used for logging in.
+ *         email:
+ *           type: string
+ *           description: The email address of the user, must be unique.
+ *         password:
+ *           type: string
+ *           description: The hashed password of the user.
+ *       example:
+ *         user_id: 1
+ *         username: 'Galaxy_Explorer'
+ *         email: 'galaxy_explorer_1@email.com'
+ *         password: 'GEpass1word'
+ */
+
 
 export default userRoute;

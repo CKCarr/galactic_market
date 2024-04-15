@@ -161,7 +161,7 @@ cartRoute.delete('/cart-items/:cartItemId', async (req, res) => {
     }
 });
 
-//schema
+//schema for the cart
 /**
  * @swagger
  * components:
