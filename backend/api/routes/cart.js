@@ -1,7 +1,7 @@
 import express from 'express';
 const cartRoute = express.Router();
 
-//gets all items in cart
+// Gets all items in a user's cart
 /**
  * @swagger
  * /cart/{userId}:
@@ -34,7 +34,7 @@ const cartRoute = express.Router();
  *       500:
  *         description: Error accessing cart
  */
-cartRoute.get('/cart/:userId', async (req, res) => {
+cartRoute.get('/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
         // Fetch the cart
@@ -52,7 +52,7 @@ cartRoute.get('/cart/:userId', async (req, res) => {
     }
 });
 
-//adds new item
+// Adds a new item to the cart
 /**
  * @swagger
  * /cart-items:
@@ -74,15 +74,15 @@ cartRoute.get('/cart/:userId', async (req, res) => {
 cartRoute.post('/cart-items', async (req, res) => {
     const { cart_id, market_item_id, quantity, subtotal } = req.body;
     try {
-        const [item] = await mysql_db.query('INSERT INTO Cart_Items (cart_id, market_item_id, quantity, subtotal) VALUES (?, ?, ?, ?)', [cart_id, market_item_id, quantity, subtotal]);
-        res.status(201).json({ message: 'Item added to cart', cart_item_id: item.insertId });
+        const result = await mysql_db.query('INSERT INTO Cart_Items (cart_id, market_item_id, quantity, subtotal) VALUES (?, ?, ?, ?)', [cart_id, market_item_id, quantity, subtotal]);
+        res.status(201).json({ message: 'Item added to cart', cart_item_id: result.insertId });
     } catch (error) {
         console.error('Error adding item to cart:', error);
         res.status(500).send('Error adding item to cart');
     }
 });
 
-//updates cart
+// Updates a cart item
 /**
  * @swagger
  * /cart-items/{cartItemId}:
@@ -122,42 +122,6 @@ cartRoute.put('/cart-items/:cartItemId', async (req, res) => {
     } catch (error) {
         console.error('Error updating cart item:', error);
         res.status(500).send('Error updating cart item');
-    }
-});
-
-//delete item from cart
-/**
- * @swagger
- * /cart-items/{cartItemId}:
- *   delete:
- *     summary: Delete a cart item
- *     tags: [Cart]
- *     parameters:
- *       - in: path
- *         name: cartItemId
- *         required: true
- *         schema:
- *           type: integer
- *         description: The ID of the cart item to delete
- *     responses:
- *       200:
- *         description: Cart item deleted successfully
- *       404:
- *         description: Cart item not found
- *       500:
- *         description: Error deleting cart item
- */
-cartRoute.delete('/cart-items/:cartItemId', async (req, res) => {
-    const { cartItemId } = req.params;
-    try {
-        const result = await mysql_db.query('DELETE FROM Cart_Items WHERE cart_item_id = ?', [cartItemId]);
-        if (result.affectedRows === 0) {
-            return res.status(404).send('Cart item not found');
-        }
-        res.status(200).send('Cart item deleted successfully');
-    } catch (error) {
-        console.error('Error deleting cart item:', error);
-        res.status(500).send('Error deleting cart item');
     }
 });
 
@@ -224,6 +188,5 @@ cartRoute.delete('/cart-items/:cartItemId', async (req, res) => {
  *         quantity: 3
  *         subtotal: 300.00
  */
-
 
 export default cartRoute;

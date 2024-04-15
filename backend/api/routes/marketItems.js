@@ -1,5 +1,5 @@
 import express from 'express';
-const marketRoute= express.Router();
+const marketRoute = express.Router();
 
 // GET all market items
 /**
@@ -18,7 +18,7 @@ const marketRoute= express.Router();
  *               items:
  *                 $ref: '#/components/schemas/MarketItem'
  */
-marketRoute.get('/market_items', async (req, res) => {
+marketRoute.get('/', async (req, res) => {
     try {
         const [items] = await mysql_db.query('SELECT * FROM Market_Items');
         res.json(items);
@@ -52,21 +52,20 @@ marketRoute.get('/market_items', async (req, res) => {
  *       404:
  *         description: Market item not found
  */
-marketRoute.get('/market-items/:id', async (req, res) => {
+marketRoute.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const [item] = await mysql_db.query('SELECT * FROM Market_Items WHERE market_item_id = ?', [id]);
         if (item.length > 0) {
             res.json(item[0]);
         } else {
-            res.status(404).send('Item not found');
+            res.status(404).send('Market item not found');
         }
     } catch (err) {
         console.error('Error fetching market item:', err);
         res.status(500).send('Error fetching market item');
     }
 });
-
 
 // POST a new market item
 /**
@@ -85,7 +84,7 @@ marketRoute.get('/market-items/:id', async (req, res) => {
  *       201:
  *         description: Market item added successfully
  */
-marketRoute.post('/market-items', async (req, res) => {
+marketRoute.post('/', async (req, res) => {
     const { item_name, item_description, price } = req.body;
     try {
         const result = await mysql_db.query('INSERT INTO Market_Items (item_name, item_description, price) VALUES (?, ?, ?)', [item_name, item_description, price]);
@@ -122,7 +121,7 @@ marketRoute.post('/market-items', async (req, res) => {
  *       404:
  *         description: Market item not found
  */
-marketRoute.put('/market-items/:id', async (req, res) => {
+marketRoute.put('/:id', async (req, res) => {
     const { item_name, item_description, price } = req.body;
     const { id } = req.params;
     try {
@@ -137,7 +136,6 @@ marketRoute.put('/market-items/:id', async (req, res) => {
         res.status(500).send('Error updating market item');
     }
 });
-
 
 //schema for market items
 /**

@@ -1,7 +1,6 @@
 import express from 'express';
 const userRoute = express.Router();
 
-
 //retrieves users
 /**
  * @swagger
@@ -19,13 +18,13 @@ const userRoute = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-userRoute.get('/users', async (req, res) => {
+userRoute.get('/', async (req, res) => {
     try {
         const [users] = await mysql_db.query('SELECT * FROM users');
         res.json(users);
     } catch (err) {
         console.error('Error fetching users from database:', err);
-        res.status(500).send('Error fetching users');
+        res.status(500).send('Error fetching users: ' + err.message);
     }
 });
 

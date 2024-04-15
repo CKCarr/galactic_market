@@ -68,11 +68,10 @@ app.use('/destinations', destRoute);
 app.use('/users', userRoute);
 
 // market items
-app.use('/market-items', marketRoute); 
+app.use('/market-items', marketRoute);
 
 //cart
-app.use('/cart/:userId', cartRoute);
-app.use('/cart-items', cartRoute);
+app.use('/cart', cartRoute);
 
 // Start the server
 app.listen(PORT, HOST, () => {

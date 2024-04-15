@@ -18,7 +18,7 @@ const destRoute = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Destination'
  */
-destRoute.get('/destinations', async (req, res) => {
+destRoute.get('/', async (req, res) => {
     try {
         const [destinations] = await mysql_db.query('SELECT * FROM Destinations');
         if (destinations.length > 0) {
@@ -28,11 +28,11 @@ destRoute.get('/destinations', async (req, res) => {
         }
     } catch (err) {
         console.error('Error fetching destinations from database:', err);
-        res.status(500).send('Error fetching destinations');
+        res.status(500).send({ message: 'Error fetching destinations', error: err.message });
     }
 });
 
-//creates new destination
+// creates new destination
 /**
  * @swagger
  * /destinations:
@@ -49,7 +49,7 @@ destRoute.get('/destinations', async (req, res) => {
  *       201:
  *         description: Destination created successfully
  */
-destRoute.post('/destinations', async (req, res) => {
+destRoute.post('/', async (req, res) => {
     const { name, description, image_url, price } = req.body;
     try {
         const [result] = await mysql_db.query('INSERT INTO Destinations (name, description, image_url, price) VALUES (?, ?, ?, ?)', [name, description, image_url, price]);
@@ -60,7 +60,7 @@ destRoute.post('/destinations', async (req, res) => {
     }
 });
 
-//retrieves details of destination
+// retrieves details of a specific destination
 /**
  * @swagger
  * /destinations/{destination_id}:
@@ -80,7 +80,7 @@ destRoute.post('/destinations', async (req, res) => {
  *       404:
  *         description: Destination not found
  */
-destRoute.get('/destinations', async (req, res) => {
+destRoute.get('/:destination_id', async (req, res) => {
     try {
         const [destinations] = await mysql_db.query('SELECT * FROM Destinations WHERE destination_id = ?', [req.params.destination_id]);
         const destination = destinations[0];
@@ -95,13 +95,12 @@ destRoute.get('/destinations', async (req, res) => {
     }
 });
 
-
-//gets price of destination
+// updates a destination
 /**
  * @swagger
- * /destinations/{destination_id}/price:
- *   get:
- *     summary: Retrieve the price of a specific destination
+ * /destinations/{destination_id}:
+ *   put:
+ *     summary: Update details of a specific destination
  *     tags: [Destinations]
  *     parameters:
  *       - in: path
@@ -109,23 +108,19 @@ destRoute.get('/destinations', async (req, res) => {
  *         required: true
  *         schema:
  *           type: integer
- *         description: The ID of the destination whose price is being retrieved
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Destination'
  *     responses:
  *       200:
- *         description: Price of the destination
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 price:
- *                   type: number
- *                   format: float
- *                   description: The price of the destination
+ *         description: Destination updated successfully
  *       404:
  *         description: Destination not found
  */
-destRoute.put('/destinations', async (req, res) => {
+destRoute.put('/:destination_id', async (req, res) => {
     const { name, description, image_url, price } = req.body;
     try {
         const [result] = await mysql_db.query('UPDATE Destinations SET name = ?, description = ?, image_url = ?, price = ? WHERE destination_id = ?', [name, description, image_url, price, req.params.destination_id]);
@@ -141,13 +136,20 @@ destRoute.put('/destinations', async (req, res) => {
 });
 
 
-// schema for destinations
+//schema for destinations
+
 /**
  * @swagger
  * components:
  *   schemas:
  *     Destination:
  *       type: object
+ *       required:
+ *         - destination_id
+ *         - name
+ *         - description
+ *         - image_url
+ *         - price
  *       properties:
  *         destination_id:
  *           type: integer
@@ -165,10 +167,6 @@ destRoute.put('/destinations', async (req, res) => {
  *           type: number
  *           format: float
  *           description: Price of the destination in USD
- *       required:
- *         - name
- *         - description
- *         - price
  */
 
 export default destRoute;
