@@ -1,194 +1,186 @@
-// backend/api/routes/travelers.js
 const express = require('express');
-const router = express.Router();
+const userRoute = express.Router();
 
-// Mock data for demonstration
-let travelers = [
-    { traveler_id: 1, first_name: 'John', last_name: 'Doe', username: 'johndoe', email: 'john@example.com', password: 'hashed_password' },
-    { traveler_id: 2, first_name: 'Jane', last_name: 'Doe', username: 'janedoe', email: 'jane@example.com', password: 'hashed_password' }
-];
-
-// GET /travelers - Retrieve a list of all travelers
+//schema
 /**
  * @swagger
- * /travelers:
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - user_id
+ *         - username
+ *         - email
+ *         - password
+ *       properties:
+ *         user_id:
+ *           type: integer
+ *           description: The auto-generated ID of the user.
+ *         username:
+ *           type: string
+ *           description: The username of the user, used for logging in.
+ *         email:
+ *           type: string
+ *           description: The email address of the user, must be unique.
+ *         password:
+ *           type: string
+ *           description: The hashed password of the user.
+ *       example:
+ *         user_id: 1
+ *         username: 'Galaxy_Explorer'
+ *         email: 'galaxy_explorer_1@email.com'
+ *         password: 'GEpass1word'
+ */
+
+
+//retrieves users
+/**
+ * @swagger
+ * /users:
  *   get:
- *     summary: Retrieve a list of all travelers
- *     tags: [Travelers]
+ *     summary: Retrieve a list of all users
+ *     tags: [Users]
  *     responses:
  *       200:
- *         description: A list of travelers
+ *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Traveler'
+ *                 $ref: '#/components/schemas/User'
  */
-router.get('/', (req, res) => {
-    res.json(travelers);
-});
-
-// POST /travelers - Create a new traveler
-/**
- * @swagger
- * components:
- *   schemas:
- *     Traveler:
- *       type: object
- *       required:
- *         - first_name
- *         - last_name
- *         - username
- *         - email
- *         - password
- *       properties:
- *         traveler_id:
- *           type: integer
- *           description: The auto-generated id of the traveler
- *         first_name:
- *           type: string
- *           description: The first name of the traveler
- *         last_name:
- *           type: string
- *           description: The last name of the traveler
- *         username:
- *           type: string
- *           description: The username of the traveler
- *         email:
- *           type: string
- *           description: The email of the traveler
- *         password:
- *           type: string
- *           description: The encrypted password of the traveler
- *       example:
- *         traveler_id: 1
- *         first_name: John
- *         last_name: Doe
- *         username: johndoe
- *         email: johndoe@example.com
- *         password: hashed_password
- */
-router.post('/', (req, res) => {
-    const { first_name, last_name, username, email, password } = req.body;
-    const newTraveler = {
-        traveler_id: travelers.length + 1, // simplistic approach for id
-        first_name,
-        last_name,
-        username,
-        email,
-        password // in production, ensure the password is hashed before storing
-    };
-    travelers.push(newTraveler);
-    res.status(201).send(newTraveler);
-});
-
-// GET /travelers/{traveler_id} - Retrieve details about a specific traveler
-/**
- * @swagger
- * /travelers/{traveler_id}:
- *   get:
- *     summary: Retrieve details about a specific traveler
- *     tags: [Travelers]
- *     parameters:
- *       - in: path
- *         name: traveler_id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The id of the traveler to retrieve
- *     responses:
- *       200:
- *         description: Detailed information about a traveler
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Traveler'
- *       404:
- *         description: Traveler not found
- */
-router.get('/:traveler_id', (req, res) => {
-    const traveler = travelers.find(t => t.traveler_id === parseInt(req.params.traveler_id));
-    if (traveler) {
-        res.json(traveler);
-    } else {
-        res.status(404).send('Traveler not found');
+userRoute.get('/users', async (req, res) => {
+    try {
+        const [users] = await mysql_db.query('SELECT * FROM users');
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users from database:', err);
+        res.status(500).send('Error fetching users');
     }
 });
 
-// PUT /travelers/{traveler_id} - Update details of a specific traveler
+//registers user
 /**
  * @swagger
- * /travelers/{traveler_id}:
- *   put:
- *     summary: Update details of a specific traveler
- *     tags: [Travelers]
- *     parameters:
- *       - in: path
- *         name: traveler_id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The id of the traveler to update
+ * /users/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Traveler'
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ */
+userRoute.post('/register', async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: 'Username, email and password are required.' });
+    }
+
+    try {
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Insert the new user into the database
+        const result = await mysql_db.query(
+            'INSERT INTO Users (username, email, password) VALUES (?, ?, ?)',
+            [username, email, hashedPassword]
+        );
+
+        res.status(201).json({ message: 'User created successfully', userId: result.insertId });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// retrieves session token
+/**
+ * @swagger
+ * /session:
+ *   get:
+ *     summary: Retrieve details about a user by session token
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Traveler updated successfully
+ *         description: Session details retrieved successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Traveler'
- *       404:
- *         description: Traveler not found
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Server error
  */
-router.put('/:traveler_id', (req, res) => {
-    let traveler = travelers.find(t => t.traveler_id === parseInt(req.params.traveler_id));
-    if (traveler) {
-        traveler.first_name = req.body.first_name || traveler.first_name;
-        traveler.last_name = req.body.last_name || traveler.last_name;
-        traveler.username = req.body.username || traveler.username;
-        traveler.email = req.body.email || traveler.email;
-        traveler.password = req.body.password || traveler.password; // remember to hash new passwords
-        res.send(traveler);
-    } else {
-        res.status(404).send('Traveler not found');
+userRoute.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const [user] = await mysql_db.query('SELECT * FROM Users WHERE username = ?', [username]);
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            res.json({ message: 'Login successful', user });
+        } else {
+            res.status(401).json({ message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-// DELETE /travelers/{traveler_id} - Delete a specific traveler
+// retrieves session token details
 /**
  * @swagger
- * /travelers/{traveler_id}:
- *   delete:
- *     summary: Delete a specific traveler
- *     tags: [Travelers]
- *     parameters:
- *       - in: path
- *         name: traveler_id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The id of the traveler to delete
+ * /session:
+ *   get:
+ *     summary: Retrieve details about a user by session token
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
- *       204:
- *         description: Traveler deleted successfully
- *       404:
- *         description: Traveler not found
+ *       200:
+ *         description: Session details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Server error
  */
+userRoute.get('/session', async (req, res) => {
+    const token = req.headers.authorization;
 
-router.delete('/:traveler_id', (req, res) => {
-    const index = travelers.findIndex(t => t.traveler_id === parseInt(req.params.traveler_id));
-    if (index >= 0) {
-        travelers.splice(index, 1);
-        res.status(204).send();
-    } else {
-        res.status(404).send('Traveler not found');
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized access' });
+    }
+
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Fetch user details
+        const [user] = await mysql_db.query('SELECT * FROM Users WHERE user_id = ?', [decoded.userId]);
+
+        res.json({ message: 'Session details retrieved successfully', user });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-module.exports = router;
+export default userRoute;

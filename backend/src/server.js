@@ -11,7 +11,10 @@ import dotenv from 'dotenv';
 import router from '../api/routes/routes.js';
 import loginRoute from '../api/routes/login.js';
 import registerRoute from '../api/routes/register.js';
-
+/* import userRoute from '../api/routes/users.js'; */
+/* import marketRoute from '../api/routes/marketItems.js';
+import cartRoute from '../api/routes/cart.js'; */
+/* import destRoute from '../api/routes/destinations.js'; */
 
 dotenv.config({ path: '../env/.env.app' });
 // create an instance of express
@@ -56,6 +59,22 @@ app.use('/', router);
 
 app.use('/register', registerRoute);
 app.use('/login', loginRoute);
+
+//destinations
+/* app.use('/destinations', destRoute); */
+
+//users
+/* app.use('/users', userRoute);
+app.use('/session', userRoute);
+app.use('/login', userRoute);
+ */
+/* // market items
+app.use('/market-items', marketRoute); */
+
+// cart
+/* app.use('/cart/:userId', cartRoute);
+
+ */
 
 // Start the server
 app.listen(PORT, HOST, () => {
