@@ -1,0 +1,26 @@
+## Project Design Write-up
+### What are we building and how does it fit the theme?
+
+We are building an API that offers destinations to travel to, merchandise to buy, and experiences to have! It fits the theme because it's a way to buy tickets to explore the universe, and buy items from all around the universe!
+
+### What tools will we use?
+
+We have used Node.js, Express, MySQL, Redis, and Swagger. The backend serves as the core of our application, managing data related to travel packages, bookings, and user interactions.
+
+### How long do we expect to spend on development of each part?
+
+We wanted to spend a few days on each thing, but there were some parts we had to spend more time on.
+
+### API Documentation
+
+We used Swagger for our API documentation and it looks like this for example:
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Welcome message
+ *     description: Returns a welcome message to the API root endpoint.
+ *     responses:
+ *       200:
+ *         description: A welcome message.
+ */
