@@ -1,5 +1,5 @@
 # Backend Dockerfile
-FROM node:20
+FROM node:18
 
 # Set noninteractive to avoid tzdata hanging
 ARG DEBIAN_FRONTEND=noninteractive
@@ -28,6 +28,12 @@ ENV LANG=C.UTF-8
 # Clean up APT when done
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Copy .env file into the container
+COPY env/.env*.* env/.env*.*
+
+# Load environment variables from .env file
+ENV $(cat env/.env*.* | grep -v '#' | xargs)
 
 WORKDIR /galactic_destinations/backend
 

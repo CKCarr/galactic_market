@@ -1,5 +1,6 @@
 // utils/importCSVData.js
 import { readCSV } from './readCSV';
+import { mysqlPool } from '../db.js';
 
 // Function to import data from CSV into MySQL database
 export const importCSVData = async (filePath, tableName) => {
@@ -16,7 +17,7 @@ export const importCSVData = async (filePath, tableName) => {
 
         const sql = `INSERT INTO ${tableName} (${columns}) VALUES ?`;
 
-        connection.query(sql, [values], (err, result) => {
+        mysqlPool.query(sql, [values], (err, result) => {
             if (err) throw err;
             console.log(`Imported ${result.affectedRows} rows into ${tableName}`);
         });
@@ -24,3 +25,11 @@ export const importCSVData = async (filePath, tableName) => {
         console.error('Error importing CSV data:', error);
     }
 };
+
+importCSVData('./datasets/users.csv', 'Users');
+importCSVData('./datasets/market_items.csv', 'Market_Items');
+importCSVData('./datasets/destinations.csv', 'Destinations');
+// Path: backend/utils/readCSV.js
+// Function to read data from a CSV file
+
+export default importCSVData;

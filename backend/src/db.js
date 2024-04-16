@@ -1,38 +1,92 @@
-// src/db.js
-// Create a connection to the MySQL database
+// /src/db.js
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
+import winston from 'winston';
 
-// import .env variables
 dotenv.config({ path: '../env/.env.mysql' });
 
-// Create a connection to the database
-
-const mysql_db = mysql.connect({
-  // Use the MYSQL_HOST env variable
-  host: process.env.MYSQL_HOST || '127.0.0.1',
-  // Use the MYSQL_USER env variable
-  user: process.env.MYSQL_USER,
-  // Use the MYSQL_PASSWORD env variable
-  password: process.env.MYSQL_PASSWORD,
-  // Use the MYSQL_DATABASE env variable
-  database: process.env.MYSQL_DATABASE,
-  debug: true,
+const logger = winston.createLogger({
+  level: 'debug',
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple(),
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+    }),
+  ],
 });
 
-// Check if the connection to the database is successful
-mysql_db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database: ', err);
-    return;
+// Create a MySQL connection pool
+const createConnectPool = () => {
+  try {
+    const mysqlPool = mysql.createPool({
+      host: process.env.MYSQL_HOST,
+      database: process.env.MYSQL_DATABASE,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      port: process.env.MYSQL_PORT,
+      connectionLimit: 10,
+      waitForConnections: true,
+      queueLimit: 0,
+    });
+    return mysqlPool.promise(); // Use the promise-based API
   }
+  catch (err) {
+    logger.error('Error creating MySQL pool:', err);
+    throw err; // Throw the error to handle it outside
+  }
+};
 
-  console.log('Connected to the database!');
-});
+// Get a connection from the pool and execute a query
+const getDestinations = async () => {
+  try {
+    const pool = createConnectPool();
+    const [rows, fields] = await pool.query('SELECT * FROM Destinations LIMIT 3');
+    console.log('Destinations:');
+    logger.info('Query result:', rows);
+  } catch (error) {
+    logger.error('Error executing query:', error);
+  }
+};
+const getUsers = async () => {
+  try {
+    const pool = createConnectPool();
+    const [rows, fields] = await pool.query('SELECT * FROM users LIMIT 3');
+    console.log('Users:');
+    logger.info('Query result:', rows);
+  } catch (error) {
+    logger.error('Error executing query:', error);
+  }
+};
+const getMarketItems = async () => {
+  try {
+    const pool = createConnectPool();
+    const [rows, fields] = await pool.query('SELECT * FROM Market_Items LIMIT 3');
+    console.log('Market Items:');
+    logger.info('Query result:', rows);
+  } catch (error) {
+    logger.error('Error executing query:', error);
+  }
+};
 
-// Handle MySQL connection errors
-connection.on('error', (err) => {
-  console.error('MySQL connection error:', err);
-});
+const getCart = async () => {
+  try {
+    const pool = createConnectPool();
+    const [rows, fields] = await pool.query('SELECT * FROM Cart LIMIT 3');
+    console.log('Cart Items:');
+    logger.info('Query result:', rows);
+  } catch (error) {
+    logger.error('Error executing query:', error);
+  }
+};
 
-export default mysql_db;
+// Call the function to get a connection from the pool
+getDestinations();
+getUsers();
+getMarketItems();
+getCart();
+
+export { createConnectPool, logger};

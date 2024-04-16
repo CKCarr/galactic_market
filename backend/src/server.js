@@ -1,67 +1,61 @@
-// src/server.js
-// Create an instance of Express and use the imported routes
-// Use redis as middleware for caching routes
-// Start the server
 import express from 'express';
-// import { redisClient } from './redis.js'
+import session from 'express-session';
+import MySQLStore from 'express-mysql-session'
+import { createConnectPool, logger } from './db.js'; // Import the MySQL connection pool
+
 import swaggerUI from 'swagger-ui-express';
 import swaggerSpecs from '../config/swagger/swaggerConfig.js';
+
 import dotenv from 'dotenv';
-// import routes for the application
-import router from '../api/routes/routes.js';
-import loginRoute from '../api/routes/login.js';
-import registerRoute from '../api/routes/register.js';
+
+dotenv.config({ path: './env/.env.app' });
+dotenv.config({ path: './env/.env.mysql' });
+
+import router from '../api/v1/route.js';
+import userRoutes from '../api/v1/users.js';
+import healthRoute from '../api/v1/health.js';
+import sessionRoute from '../api/v1/session.js';
 
 
-dotenv.config({ path: '../env/.env.app' });
-// create an instance of express
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
+
 const app = express();
 
-// Define the port and host
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '127.0.0.1';
-// Check if HOST is set correctly
-console.log(process.env.HOST);
-// Check if port is set correctly
-console.log(process.env.PORT);
+// Create MySQL session store
+const sessionStore = new MySQLStore({
+  createDatabaseTable: true,
+  clearExpired: true,
+  schema: {
+    tableName: 'session',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data',
+    },
+  },
+}, createConnectPool()); // Pass the connection pool to the session store
 
-// // Middleware for caching with Redis
-// app.use((req, res, next) => {
-//     const key = req.originalUrl;
-
-//     redisClient.get(key, (err, data) => {
-//         if (err) {
-//             console.error(err);
-//             return next();
-//         }
-//         if (data) {
-//             // If the data is found in Redis, send it as a response
-//             console.log('Data from Redis: ');
-//             res.setHeader('Content-Type', 'application/json');
-//             return res.send(data);
-//         } else {
-//             // If the data is not found in Redis, call the next middleware
-//             return next();
-//         }
-//     });
-// });
-
-// swagger route for application
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
-
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// use the route created in routes.js
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  // Use the MySQL session store for storing session data
+  store: sessionStore,
+  cookie: { secure: false, maxAge: 60000 },
+}));
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 app.use('/', router);
+app.use('/api/v1/health', healthRoute);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/session', sessionRoute);
 
-app.use('/register', registerRoute);
-app.use('/login', loginRoute);
-
-// Start the server
 app.listen(PORT, HOST, () => {
-    console.log(`Server up and running! Listening on http://${HOST}:${PORT}`);
+    console.log('TO INFINITY AND BEYOND!!!!🚀🧑‍🚀👨‍🚀👩‍🚀🚀')
+    logger.info(`Server up and running! Listening on http://${HOST}:${PORT}`);
 });
-// The server is now running on http://localhost:3000/. You can test the API endpoints using Postman or any other API testing tool.
-// Swagger definition in a separate file for better organization
-// '/api-docs' is the endpoint where Swagger UI will be available. 
-//API documentation by visiting http://localhost:3000/api-docs in your browser after starting your server.

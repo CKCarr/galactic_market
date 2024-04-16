@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   backend:
     build:
       context: ./backend
@@ -8,7 +9,6 @@ services:
     env_file:
       - ./backend/env/.env.app
       - ./backend/env/.env.mysql
-      - ./backend/env/.env.redis
     volumes:
       - ./backend:/galactic_destinations/backend
     ports:
@@ -16,7 +16,6 @@ services:
       - "9229:9229"
     depends_on:
       - mysql
-      - redis
     healthcheck:
       test:
         [
@@ -32,9 +31,10 @@ services:
   mysql:
     image: mysql:8.0
     env_file:
+      - ./backend/env/.env.app
       - ./backend/env/.env.mysql
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - mysqldata:/var/lib/mysql
       - ./backend/config/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
@@ -47,30 +47,12 @@ services:
     networks:
       - backend
 
-  redis:
-    image: redis:6.0
-    env_file:
-      - ./backend/env/.env.redis
-    volumes:
-      - redisdata:/data
-      - ./backend/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 30s
-      retries: 10
-    command: redis-server /usr/local/etc/redis/redis.conf
-    networks:
-      - backend
-
   frontend:
     build:
       context: ./frontend
       dockerfile: ./Docker/Dockerfile
     ports:
-      - "4321:4321"
+      - 4321:4321
     volumes:
       - ./frontend:/galactic_destinations/frontend
     networks:
@@ -82,4 +64,3 @@ networks:
 
 volumes:
   mysqldata: {}
-  redisdata: {}
