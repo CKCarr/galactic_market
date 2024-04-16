@@ -51,7 +51,7 @@ app.use(session({
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 app.use('/', router);
-app.use('/api/v1/health', healthRoute);
+app.use('/health', healthRoute);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/session', sessionRoute);
 
@@ -59,3 +59,5 @@ app.listen(PORT, HOST, () => {
     console.log('TO INFINITY AND BEYOND!!!!🚀🧑‍🚀👨‍🚀👩‍🚀🚀')
     logger.info(`Server up and running! Listening on http://${HOST}:${PORT}`);
 });
+
+// swagger hosted at http//localhost:3000/api-docs

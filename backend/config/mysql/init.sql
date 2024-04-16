@@ -26,7 +26,7 @@ USE mysql_galactic_db;
 -- -- Flush privileges to apply the changes
 -- FLUSH PRIVILEGES;
 
-DROP TABLE IF EXISTS Users;
+
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS Destinations;
+
 CREATE TABLE IF NOT EXISTS destinations (
     dest_id INT AUTO_INCREMENT PRIMARY KEY,
     dest_name VARCHAR(255),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS destinations (
     dest_image_url VARCHAR(255) -- Optional field for image URLs
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS Market_Items;
+
 CREATE TABLE IF NOT EXISTS market_items (
     mi_id INT AUTO_INCREMENT PRIMARY KEY,
     mi_name VARCHAR(255),
@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS market_items (
     mi_price DECIMAL(10, 2),
     mi_image_url VARCHAR(255) -- Optional field for image URLs
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; 
+
 
 CREATE TABLE IF NOT EXISTS cart (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,11 +67,11 @@ CREATE TABLE IF NOT EXISTS cart (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- CREATE TABLE IF NOT EXISTS session (
---     session_id VARCHAR(255) NOT NULL PRIMARY KEY,
---     expires DATETIME NOT NULL,
---     data TEXT NOT NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS session (
+    session_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    expires DATETIME NOT NULL,
+    data TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Import data from users.csv into Users table
 INSERT INTO users (username, email, password)
