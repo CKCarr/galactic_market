@@ -1,6 +1,8 @@
 import express from 'express';
-import { mysqlPool } from '../../src/db.js';
+import { createConnectPool, logger } from '../../src/db.js';
+
 const destRoute = express.Router();
+const mysqlPool = createConnectPool();
 
 // retrieves list of destinations
 /**
@@ -23,44 +25,17 @@ destRoute.get('/', async (req, res) => {
     try {
         const [destinations] = await mysqlPool.query('SELECT dest_name, dest_description, dest_price, dest_image_url FROM destinations');
         if (destinations.length > 0) {
+            logger.info('Destinations retrieved successfully', destinations);
             res.json(destinations);
         } else {
+            logger.info('No destinations found');
             res.status(404).send({ message: 'No destinations found' });
         }
     } catch (err) {
-        console.error('Error fetching destinations from database:', err);
+        logger.error('Error fetching destinations from database:', err);
         res.status(500).send({ message: 'Error fetching destinations', error: err.message });
     }
 });
-
-// creates new destination
-/**
- * @swagger
- * /destinations:
- *   post:
- *     summary: Create a new destination
- *     tags: [Destinations]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Destination'
- *     responses:
- *       201:
- *         description: Destination created successfully
- */
-destRoute.post('/', async (req, res) => {
-    const { dest_name, dest_description, dest_price, dest_image_url } = req.body;
-    try {
-        const [result] = await mysqlPool.query('INSERT INTO destinations (dest_name, dest_description, dest_price, dest_image_url) VALUES (?, ?, ?, ?)', [dest_name, dest_description, dest_price, dest_image_url]);
-        res.status(201).json({ message: 'Destination created successfully', destination_id: result.insertId });
-    } catch (error) {
-        console.error('Error adding destination:', error);
-        res.status(500).send('Error adding destination');
-    }
-});
-
 // retrieves details of a specific destination
 /**
  * @swagger
@@ -92,10 +67,11 @@ destRoute.get('/:destination_id', async (req, res) => {
             res.status(404).json({ message: 'Destination not found' });
         }
     } catch (error) {
-        console.error('Error fetching destination:', error);
+        logger.error('Error fetching destination:', error);
         res.status(500).send('Error fetching destination');
     }
 });
+
 
 // updates a destination
 /**
@@ -133,14 +109,11 @@ destRoute.put('/:destination_id', async (req, res) => {
             res.status(200).send('Destination updated successfully');
         }
     } catch (error) {
-        console.error('Error updating destination:', error);
+        logger.error('Error updating destination:', error);
         res.status(500).send('Error updating destination');
     }
 });
-
-
 //schema for destinations
-
 /**
  * @swagger
  * components:
