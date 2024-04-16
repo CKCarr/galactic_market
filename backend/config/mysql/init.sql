@@ -4,12 +4,12 @@
 
 -- CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
 
-SET @password = '${MYSQL_PASSWORD}';
+/* SET @password = '${MYSQL_PASSWORD}'; */
 
 -- CREATE USER 'galactic_user'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_PASSWORD}';
 
--- -- Create a user with the password from the environment variable
-ALTER USER 'galactic_user'@'%' IDENTIFIED WITH mysql_native_password BY @password;
+/* -- -- Create a user with the password from the environment variable
+ALTER USER 'galactic_user'@'%' IDENTIFIED WITH mysql_native_password BY @password; */
 
 -- ALTER USER 'galactic_user'@'localhost' IDENTIFIED WITH mysql_native_password BY '@password';
 
