@@ -12,7 +12,7 @@ const swaggerDefinition = {
             description: 'A custom API for Galactic Destination project',
         },
     },
-    apis: ['api/routes/*.js'], // PAth to the API route files
+    apis: ['api/v1/*.js'], // PAth to the API route files
 };
 
 // Options for the swagger docs - create a new instance of swaggerJsdoc

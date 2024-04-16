@@ -1,6 +1,6 @@
 # Frontend Dockerfile
 # Start with a base Node.js image
-FROM node:20
+FROM node:18
 
 # Set the working directory inside the container
 WORKDIR /galactic_destinations/frontend
