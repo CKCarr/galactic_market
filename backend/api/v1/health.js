@@ -6,7 +6,7 @@ const healthRoute = express.Router();
 
 /**
  * @swagger
- * /api/v1/health:
+ * /health:
  *   get:
  *     summary: Check the health of the application
  *     description: Check if the application is running
@@ -31,7 +31,7 @@ const healthRoute = express.Router();
  *               description: The current timestamp
  */
 
-healthRoute.get('/api/v1/health', (req, res) => {
+healthRoute.get('/health', (req, res) => {
     // Perform necessary checks, such as database connectivity
     const healthCheck = {
         uptime: process.uptime(),
