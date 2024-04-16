@@ -16,7 +16,6 @@ import userRoutes from '../api/v1/users.js';
 import healthRoute from '../api/v1/health.js';
 import sessionRoute from '../api/v1/session.js';
 
-
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 
@@ -54,6 +53,7 @@ app.use('/', router);
 app.use('/api/v1/health', healthRoute);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/session', sessionRoute);
+
 
 app.listen(PORT, HOST, () => {
     console.log('TO INFINITY AND BEYOND!!!!🚀🧑‍🚀👨‍🚀👩‍🚀🚀')

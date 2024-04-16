@@ -44,7 +44,7 @@ const createConnectPool = () => {
 const getDestinations = async () => {
   try {
     const pool = createConnectPool();
-    const [rows, fields] = await pool.query('SELECT * FROM Destinations LIMIT 3');
+    const [rows, fields] = await pool.query('SELECT * FROM destinations LIMIT 3');
     console.log('Destinations:');
     logger.info('Query result:', rows);
   } catch (error) {
@@ -64,7 +64,7 @@ const getUsers = async () => {
 const getMarketItems = async () => {
   try {
     const pool = createConnectPool();
-    const [rows, fields] = await pool.query('SELECT * FROM Market_Items LIMIT 3');
+    const [rows, fields] = await pool.query('SELECT * FROM market_items LIMIT 3');
     console.log('Market Items:');
     logger.info('Query result:', rows);
   } catch (error) {
@@ -75,7 +75,7 @@ const getMarketItems = async () => {
 const getCart = async () => {
   try {
     const pool = createConnectPool();
-    const [rows, fields] = await pool.query('SELECT * FROM Cart LIMIT 3');
+    const [rows, fields] = await pool.query('SELECT * FROM cart LIMIT 3');
     console.log('Cart Items:');
     logger.info('Query result:', rows);
   } catch (error) {
