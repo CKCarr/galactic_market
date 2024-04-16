@@ -36,6 +36,7 @@ destRoute.get('/', async (req, res) => {
         res.status(500).send({ message: 'Error fetching destinations', error: err.message });
     }
 });
+
 // retrieves details of a specific destination
 /**
  * @swagger
@@ -71,7 +72,6 @@ destRoute.get('/:destination_id', async (req, res) => {
         res.status(500).send('Error fetching destination');
     }
 });
-
 
 // updates a destination
 /**
@@ -113,6 +113,7 @@ destRoute.put('/:destination_id', async (req, res) => {
         res.status(500).send('Error updating destination');
     }
 });
+
 //schema for destinations
 /**
  * @swagger

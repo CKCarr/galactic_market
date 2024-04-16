@@ -102,7 +102,6 @@ marketRoute.post('/', async (req, res) => {
     }
 });
 
-
 // PUT to update a market item
 /**
  * @swagger
