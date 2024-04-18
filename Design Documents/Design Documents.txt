@@ -1,17 +1,24 @@
-## Project Design Write-up
-### What are we building and how does it fit the theme?
+Project Design Write-up
 
-We are building an API that offers destinations to travel to, merchandise to buy, and experiences to have! It fits the theme because it's a way to buy tickets to explore the universe, and buy items from all around the universe!
+What are we building and how does it fit the theme?
 
-### What tools will we use?
+We are building an API that offers destinations to travel to, merchandise to buy, and experiences to have! 
+It fits the theme because it's a way to buy tickets to explore the universe, and buy items from all around the universe!
 
-We have used Node.js, Express, MySQL, Redis, and Swagger. The backend serves as the core of our application, managing data related to travel packages, bookings, and user interactions.
+What tools will we use?
 
-### How long do we expect to spend on development of each part?
+We have used Node.js, Express, MySQL, Swagger, docker and winston for a logger.
+The backend serves as the core of our application, managing data related to travel packages, bookings, and user interactions.
+we also had tried to use redis but we ended up having to scrap it because it kept breaking the server.
+
+How long do we expect to spend on development of each part?
 
 We wanted to spend a few days on each thing, but there were some parts we had to spend more time on.
+Mainly because of mysql and node not wanting to work together so it was causing alot of issues. 
+We were also having issues with imports causing the whole server to crash, it took us awhile to figure it out why.
+But we eventually were able to get it to work!
 
-### API Documentation
+API Documentation
 
 We used Swagger for our API documentation and it looks like this for example:
 /**
