@@ -1,26 +1,9 @@
-// api/routes/routes.js - api routes for the application
+// api/v1/views/routes.js - api routes for the application
 
 import express from 'express';
+import { logger } from '../../../src/db.js'
 const router = express.Router();
 
-/*
-swagger: '2.0'
-info:
-    title: Galactic Destination custom API
-    version: 1.0.0
-    description: A custom API for Galactic Destination project
-    contact:
-        name: Galactic Destination Team
-        email:
-    securitySchemes:
-        bearerAuth:
-            type: http
-            scheme: bearer
-            bearerFormat: JWT
-
-    security:
-        - bearerAuth: []
-*/
 /**
  * @swagger
  * /:

@@ -70,6 +70,9 @@ app.use(saveSession);
 // swagger
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 
+// home route
+app.use('/', router);
+
 // cart routes
 app.use('/', cartRoutes);
 // destination routes
@@ -78,8 +81,7 @@ app.use('/', destRoute);
 app.use('/', healthRoute);
 // market items routes
 app.use('/', marketRoute);
-// home route
-app.use('/', router);
+
 // session routes
 app.use('/', sessionRoute);
 // user routes

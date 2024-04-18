@@ -13,7 +13,7 @@ const destinationController = {
     },
 
     getById: async (req, res) => {
-        const { dest_id } = req.params;
+        const dest_id = req.params.dest_id;
         try {
             const destination = await getDestinationById(dest_id);
             if (destination) {
