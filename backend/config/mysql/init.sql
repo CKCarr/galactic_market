@@ -1,12 +1,28 @@
 -- This script initializes the database schema for the Galactic Market project.
 -- Check if the database exists or create it
--- DROP DATABASE IF EXISTS mysql_galactic_db;
+DROP DATABASE IF EXISTS mysql_galactic_db;
 CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
+
+-- Set passwords using environment variables
+SET @password = '${MYSQL_PASSWORD}';
+SET @root_password = '${MYSQL_ROOT_PASSWORD}';
+
+-- Alter users to use caching_sha2_password authentication
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY @root_password;
+ALTER USER 'galactic_user'@'%' IDENTIFIED WITH caching_sha2_password BY @password;
 
 -- Use the database
 USE mysql_galactic_db;
 
+-- Grant privileges to the user
+GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'%';
 
+-- Flush privileges to apply the changes
+FLUSH PRIVILEGES;
+
+-- Create the tables for the Galactic Market project
+
+DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
@@ -16,7 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+DROP TABLE IF EXISTS destinations;
 CREATE TABLE IF NOT EXISTS destinations (
     dest_id INT AUTO_INCREMENT PRIMARY KEY,
     dest_name VARCHAR(255),
@@ -25,7 +41,7 @@ CREATE TABLE IF NOT EXISTS destinations (
     dest_image_url VARCHAR(255) -- Optional field for image URLs
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+DROP TABLE IF EXISTS market_items;
 CREATE TABLE IF NOT EXISTS market_items (
     mi_id INT AUTO_INCREMENT PRIMARY KEY,
     mi_name VARCHAR(255),
@@ -34,7 +50,8 @@ CREATE TABLE IF NOT EXISTS market_items (
     mi_image_url VARCHAR(255) -- Optional field for image URLs
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+DROP TABLE IF EXISTS cart;
+DROP TABLE IF EXISTS cart;
 CREATE TABLE IF NOT EXISTS cart (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -49,6 +66,7 @@ CREATE TABLE IF NOT EXISTS cart (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+DROP TABLE IF EXISTS session;
 CREATE TABLE IF NOT EXISTS session (
     session_id VARCHAR(255) NOT NULL PRIMARY KEY,
     expires TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
