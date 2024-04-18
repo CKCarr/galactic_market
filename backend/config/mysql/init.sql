@@ -3,22 +3,22 @@
 DROP DATABASE IF EXISTS mysql_galactic_db;
 CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
 
--- Set passwords using environment variables
-SET @password = '${MYSQL_PASSWORD}';
-SET @root_password = '${MYSQL_ROOT_PASSWORD}';
+-- -- Set passwords using environment variables
+-- SET @password = '${MYSQL_PASSWORD}';
+-- SET @root_password = '${MYSQL_ROOT_PASSWORD}';
 
--- Alter users to use caching_sha2_password authentication
-ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY @root_password;
-ALTER USER 'galactic_user'@'%' IDENTIFIED WITH caching_sha2_password BY @password;
+-- -- Alter users to use caching_sha2_password authentication
+-- ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY @root_password;
+-- ALTER USER 'galactic_user'@'%' IDENTIFIED WITH caching_sha2_password BY @password;
 
 -- Use the database
 USE mysql_galactic_db;
 
--- Grant privileges to the user
-GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'%';
+-- -- Grant privileges to the user
+-- GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'%';
 
--- Flush privileges to apply the changes
-FLUSH PRIVILEGES;
+-- -- Flush privileges to apply the changes
+-- FLUSH PRIVILEGES;
 
 -- Create the tables for the Galactic Market project
 

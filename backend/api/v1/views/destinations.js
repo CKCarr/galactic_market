@@ -40,7 +40,7 @@ destRoute.get('/destinations', destinationController.getAll);
  *     tags: [Destinations]
  *     parameters:
  *       - in: path
- *         name: destination_id
+ *         name: dest_id
  *         required: true
  *         schema:
  *           type: integer
@@ -51,6 +51,7 @@ destRoute.get('/destinations', destinationController.getAll);
  *       404:
  *         description: Destination not found
  */
+
 destRoute.get('/destinations/:dest_id', destinationController.getById);
 
 // updates a destination
