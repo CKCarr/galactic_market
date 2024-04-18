@@ -42,17 +42,17 @@ app.use(session({
 //Create Route for Load Product Data
 app.get("/", (request, response) => {
 
-	const query = `SELECT * FROM Destinations LIMIT 3`;
+	const query = `SELECT * FROM destinations`;
 
 	//Execute Query
 	connection.query(query, (error, result) => {
 
-		if(!request.session.Cart)
+		if(!request.session.cart)
 		{
-			request.session.Cart = [];
+			request.session.cart = [];
 		}
 
-		response.render('Destination', { Destination : result, Cart : request.session.Cart });
+		response.render('Destination', { Destination : result, Cart : request.session.cart });
 
 	});
 
@@ -61,18 +61,18 @@ app.get("/", (request, response) => {
 //Create Route for Add Item into Cart
 app.post('/add_cart', (request, response) => {
 
-	const product_id = request.body.Destinations.id;
+	const dest_id = request.body.dest_id;
 
-	const product_name = request.body.Destinations.name;
+	const dest_name = request.body.dest_name;
 
-	const product_price = request.body.Destinations.price;
+	const dest_price = request.body.dest_price;
 
 	let count = 0;
 
-	for(let i = 0; i < request.session.Cart.length; i++)
+	for(let i = 0; i < request.session.cart.length; i++)
 	{
 
-		if(request.session.Cart[i].Destinations.id === id)
+		if(request.session.cart[i].dest_id === id)
 		{
 			request.session.Cart[i].quantity += 1;
 
@@ -90,7 +90,7 @@ app.post('/add_cart', (request, response) => {
 			quantity : 1
 		};
 
-		request.session.Cart.push(cart_data);
+		request.session.cart.push(cart_data);
 	}
 
 	response.redirect("/");

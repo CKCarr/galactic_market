@@ -4,7 +4,7 @@
 
 ### Introduction
 
-"Galactic Enterprise Cruises" is a futuristic space tourism API designed to offer tiered travel packages to various galactic destinations. This API serves as a gateway to explore the universe, offering tailored travel experiences for different classes of space adventurers. Whether it's a budget-friendly journey to nearby stars or a luxurious voyage to distant galaxies, our API connects users with the wonders of space travel.
+"Galactic Enterprise Cruises" is a futuristic space tourism API designed to offer travel packages to various galactic destinations. This API serves as a gateway to explore the universe, offering tailored travel experiences for space adventurers. Whether it's a budget-friendly journey to nearby stars or a luxurious voyage to distant galaxies, our API connects users with the wonders of space travel. Purchase market items to add to your experience along the way.
 
 ### Project Structure
 
@@ -12,7 +12,7 @@ The project is divided into two main components:
 
 - Backend:
 
-    Built with Node.js, Express, MySQL, Redis, and Swagger, the backend serves as the core of our application, managing data related to travel packages, bookings, and user interactions.
+    Built with Node.js, Express, MySQL, Winston and Swagger, the backend serves as the core of our application, managing data related to travel and product purchases for user interactions.
 
 - Frontend:
 
@@ -20,9 +20,13 @@ The project is divided into two main components:
 
 ### Features
 
-- Tiered Travel Packages:
+- Destinations
 
-    Offers travel options to six different galactic destinations, with access varying by travel class – mainstream, premium, and luxury.
+    Offers travel options to six different galactic destinations.
+
+- Market Items
+
+    Offer products from across the galaxy to purchase along your cruise.
 
 - Astro Frontend:
 
@@ -34,7 +38,7 @@ The project is divided into two main components:
 
 ### Technical Stack
 
-- Backend: Node.js, Express, MySQL, Redis, Swagger
+- Backend: Node.js, Express, MySQL, Winston(logging), Swagger
 - Frontend: Astro
 - Containerization: Docker with Docker-Compose
 
@@ -60,14 +64,8 @@ ___
 | DB_USER  | value matches (.app .db) |
 | DB_PASS  | value matches (.app .db) |
 | PORT     | 3000                    |
-
-### Redis Environment Variables (.env.redis)
-
-| Variable   | Value  |
-|------------|--------|
-| REDIS_PORT | 6379   |
-| REDIS_HOST | redis |
-| REDIS_PASSWORD | secret value |
+|JWT_SECRET | secret string |
+|SESSION_SECRET | secret string |
 
 ### MySQL Database Environment Variables (.env.mysql)
 
@@ -98,6 +96,7 @@ Connect to express API server and routes.
 docker exec -it galactic_destinations_backend_1 /bin/bash
 npm run dev # this was launched on container start so it should already be available
 ```
+
 the server will listen on port 0.0.0.0
 to see the output of the API routes
 Run the server and use 127.0.0.1:3000 in the browser
@@ -111,10 +110,10 @@ run mysql and Redis
 docker exec -it galactic_destinations_frontend_1 /bin/bash
 npm run dev # this was launched on container start so it should already be available
 ```
+
 the server will listen on port 0.0.0.0
 to see the output of the API routes
 Run the server and use `127.0.0.1:4321` in the browser
-
 
 ## Command to log the MySQL database
 
@@ -123,13 +122,6 @@ Run on cli
 ``` bash
 docker exec -it galactic_destinations_mysql_1 /bin/bash
 mysql -u username -p
-```
-
-### Command to log into the Redis database
-
-``` bash
-docker exec -it galactic_destinations_redis_1 /bin/bash
-redis-cli
 ```
 
 ## Command to run Unittest for the backend
@@ -182,71 +174,9 @@ This project aims to showcase the potential of modern web technologies in creati
 
 ### Swagger Documentation
 
-#### View Documentation:
- - Start your Node.js server and navigate to http://localhost:3000/api-docs in your browser. You should see the Swagger UI interface with your API documentation.
+- Start your Node.js server and navigate to <http://localhost:3000/api-docs> in your browser. You should see the Swagger UI interface with your API documentation.
 
 ## Directory File Tree
 
 ```bash
-.
-├── Makefile
-├── README.md
-├── backend
-│   ├── Docker
-│   │   └── Dockerfile
-│   ├── api
-│   │   └── routes
-│   │       ├── destinations.js
-│   │       └── routes.js
-│   ├── config
-│   │   ├── mysql
-│   │   │   └── my.cnf
-│   │   ├── redis
-│   │   │   └── redis.conf
-│   │   └── swaggerConfig.js
-│   ├── database
-│   │   ├── galactic_market_schema.sql
-│   │   ├── init.sql
-│   │   └── run_sql_files.sh
-│   ├── datasets
-│   ├── dump.rdb
-│   ├── env
-│   ├── make.log
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── src
-│   │   ├── db.js
-│   │   ├── redis.js
-│   │   ├── server.js
-│   │   └── utils
-│   │       ├── logger.js
-│   │       └── readCSV.js
-│   ├── start.sh
-│   └── test
-│       └── api.test.js
-├── docker-compose.yml
-├── frontend
-│   ├── Docker
-│   │   └── Dockerfile
-│   ├── README.md
-│   ├── astro.config.mjs
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── public
-│   │   └── favicon.svg
-│   ├── src
-│   │   ├── components
-│   │   │   └── Card.astro
-│   │   ├── env.d.ts
-│   │   ├── layouts
-│   │   │   └── Layout.astro
-│   │   └── pages
-│   │       └── index.astro
-│   ├── start.sh
-│   └── tsconfig.json
-├── make.log
-└── public
-    └── UML
-
-24 directories, 36 files
 ```

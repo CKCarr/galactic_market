@@ -1,0 +1,27 @@
+[
+  {
+    "username": "Galaxy_Explorer",
+    "email": "galaxy_explorer_1@email.com",
+    "password": "GEpass1word"
+  },
+  {
+    "username": "Star_Traveler",
+    "email": "star_traveler_2@email.com",
+    "password": "STpass2word"
+  },
+  {
+    "username": "Cosmic_Wanderer",
+    "email": "cosmic_wanderer_3@email.com",
+    "password": "CWpass3word"
+  },
+  {
+    "username": "Space_Voyager",
+    "email": "space_voyager_4@email.com",
+    "password": "SVpass4word"
+  },
+  {
+    "username": "Astro_Pioneer",
+    "email": "astro_pioneer_5@email.com",
+    "password": "APpass5word"
+  }
+]
