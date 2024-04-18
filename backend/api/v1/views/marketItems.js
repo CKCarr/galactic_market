@@ -1,5 +1,6 @@
 import express from 'express';
-import { createConnectPool, logger } from '../../src/db.js';
+import { createConnectPool, logger } from '../../../src/db.js';
+import marketItemController from '../controllers/marketItemController.js';
 
 const marketRoute = express.Router();
 const mysqlPool = createConnectPool();
@@ -21,16 +22,7 @@ const mysqlPool = createConnectPool();
  *               items:
  *                 $ref: '#/components/schemas/MarketItem'
  */
-marketRoute.get('/', async (req, res) => {
-    try {
-        const [items] = await mysqlPool.query('SELECT * FROM market_items');
-        logger.info('Market items retrieved successfully', items);
-        res.json(items);
-    } catch (err) {
-        logger.error('Error fetching market items:', err);
-        res.status(500).send('Error fetching market items');
-    }
-});
+marketRoute.get('/', marketItemController.getAll);
 
 // GET a single market item by ID
 /**
@@ -56,22 +48,7 @@ marketRoute.get('/', async (req, res) => {
  *       404:
  *         description: Market item not found
  */
-marketRoute.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [item] = await mysqlPool.query('SELECT * FROM market_items WHERE market_item_id = ?', [id]);
-        if (item.length > 0) {
-            logger.info('Market item retrieved successfully', item[0]);
-            res.json(item[0]);
-        } else {
-            logger.error('Market item not found', { id });
-            res.status(404).send('Market item not found');
-        }
-    } catch (err) {
-        logger.error('Error fetching market item:', err);
-        res.status(500).send('Error fetching market item');
-    }
-});
+marketRoute.get('/:id', marketItemController.getById);
 
 // POST a new market item
 /**
@@ -90,17 +67,7 @@ marketRoute.get('/:id', async (req, res) => {
  *       201:
  *         description: Market item added successfully
  */
-marketRoute.post('/', async (req, res) => {
-    const { mi_name, mi_description, mi_price } = req.body;
-    try {
-        const [result] = await mysqlPool.query('INSERT INTO market_items (mi_name, mi_description, mi_price) VALUES (?, ?, ?)', [mi_name, mi_description, mi_price]);
-        logger.info('New market item added successfully', { id: result.insertId });
-        res.status(201).json({ message: 'Item added successfully', market_item_id: result.insertId });
-    } catch (err) {
-        logger.error('Error adding market item:', err);
-        res.status(500).send('Error adding market item');
-    }
-});
+marketRoute.post('/', marketItemController.add);
 
 // PUT to update a market item
 /**
@@ -128,23 +95,7 @@ marketRoute.post('/', async (req, res) => {
  *       404:
  *         description: Market item not found
  */
-marketRoute.put('/:id', async (req, res) => {
-    const { mi_name, mi_description, mi_price } = req.body;
-    const { id } = req.params;
-    try {
-        const [result] = await mysqlPool.query('UPDATE market_items SET mi_name = ?, mi_description = ?, mi_price = ? WHERE market_item_id = ?', [mi_name, mi_description, mi_price, id]);
-        if (result.affectedRows === 0) {
-            logger.error('Market item not found on update', { id });
-            res.status(404).send('Market item not found');
-        } else {
-            logger.info('Market item updated successfully', { id });
-            res.status(200).send('Market item updated successfully');
-        }
-    } catch (err) {
-        logger.error('Error updating market item:', err);
-        res.status(500).send('Error updating market item');
-    }
-});
+marketRoute.put('/:id', marketItemController.update);
 
 //schema for market items
 /**

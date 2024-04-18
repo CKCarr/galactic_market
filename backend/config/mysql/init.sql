@@ -1,37 +1,19 @@
 -- This script initializes the database schema for the Galactic Market project.
 -- Check if the database exists or create it
 -- DROP DATABASE IF EXISTS mysql_galactic_db;
-
--- CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
-
-/* SET @password = '${MYSQL_PASSWORD}'; */
-
--- CREATE USER 'galactic_user'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_PASSWORD}';
-
-/* -- -- Create a user with the password from the environment variable
-ALTER USER 'galactic_user'@'%' IDENTIFIED WITH mysql_native_password BY @password; */
-
--- ALTER USER 'galactic_user'@'localhost' IDENTIFIED WITH mysql_native_password BY '@password';
-
--- ALTER USER 'galactic_user'@'%' IDENTIFIED WITH mysql_native_password BY @password;
+CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
 
 -- Use the database
 USE mysql_galactic_db;
-
--- -- Grant privileges to the user with the password from the environment variable
--- GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'%';
--- GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'localhost';
--- GRANT ALL PRIVILEGES ON mysql_galactic_db.* TO 'galactic_user'@'mysql';
-
--- -- Flush privileges to apply the changes
--- FLUSH PRIVILEGES;
 
 
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
     email VARCHAR(255) UNIQUE,
-    password VARCHAR(255)
+    password VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -50,7 +32,7 @@ CREATE TABLE IF NOT EXISTS market_items (
     mi_description TEXT,
     mi_price DECIMAL(10, 2),
     mi_image_url VARCHAR(255) -- Optional field for image URLs
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 CREATE TABLE IF NOT EXISTS cart (
@@ -69,18 +51,19 @@ CREATE TABLE IF NOT EXISTS cart (
 
 CREATE TABLE IF NOT EXISTS session (
     session_id VARCHAR(255) NOT NULL PRIMARY KEY,
-    expires DATETIME NOT NULL,
+    expires TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data TEXT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Import data from users.csv into Users table
 INSERT INTO users (username, email, password)
 VALUES
-    ('Galaxy_Explorer', 'galaxy_explorer_1@email.com', 'GEpass1word'),
-    ('Star_Traveler', 'star_traveler_2@email.com', 'STpass2word'),
-    ('Cosmic_Wanderer', 'cosmic_wanderer_3@email.com', 'CWpass3word'),
-    ('Space_Voyager', 'space_voyager_4@email.com', 'SVpass4word'),
-    ('Astro_Pioneer', 'astro_pioneer_5@email.com', 'APpass5word');
+    ('Galaxy_Explorer', 'galaxy_explorer_1@email.com', '$2b$10$bAkrIB2ngVI5hF1ooe4MquGj/yi5O0SG.OM1uZX2882ZNItcOw2Yq'),
+    ('Star_Traveler', 'star_traveler_2@email.com', '$2b$10$5ELQrtAKl2F49Zt9GtvixuYHpvrSX0ZWbWXjEMVKra802gZzzuNL.'),
+    ('Cosmic_Wanderer', 'cosmic_wanderer_3@email.com', '$2b$10$Mqc2qIERi9r20GoayegTlevFT00MTJjM5oPOiLnhrX53yYn.CiiCG'),
+    ('Space_Voyager', 'space_voyager_4@email.com', '$2b$10$bWXarZo431blFT1U9F5daeZ/PGspbVpvSgjbKw4rjhZOY6qR.9LZC'),
+    ('Astro_Pioneer', 'astro_pioneer_5@email.com', '$2b$10$J5rVK/wQx3CngxUS3drbfu259bMD1BzqCmKX1ijQJngF2evJ1Dq5G');
+
 
 -- Import data from destinations.csv into Destinations table
 INSERT INTO destinations (dest_name, dest_description, dest_price, dest_image_url)

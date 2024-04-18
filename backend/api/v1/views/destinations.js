@@ -1,8 +1,15 @@
+// api/v1/views
+
 import express from 'express';
-import { createConnectPool, logger } from '../../src/db.js';
+
+import destinationController from '../controllers/destinationController.js';
+import { createConnectPool } from '../../../src/db.js';
 
 const destRoute = express.Router();
 const mysqlPool = createConnectPool();
+
+// Apply authMiddleware to routes that require authentication
+// destRoute.use(authMiddleware);
 
 // retrieves list of destinations
 /**
@@ -21,26 +28,13 @@ const mysqlPool = createConnectPool();
  *               items:
  *                 $ref: '#/components/schemas/Destination'
  */
-destRoute.get('/', async (req, res) => {
-    try {
-        const [destinations] = await mysqlPool.query('SELECT dest_name, dest_description, dest_price, dest_image_url FROM destinations');
-        if (destinations.length > 0) {
-            logger.info('Destinations retrieved successfully', destinations);
-            res.json(destinations);
-        } else {
-            logger.info('No destinations found');
-            res.status(404).send({ message: 'No destinations found' });
-        }
-    } catch (err) {
-        logger.error('Error fetching destinations from database:', err);
-        res.status(500).send({ message: 'Error fetching destinations', error: err.message });
-    }
-});
+
+destRoute.get('/destinations', destinationController.getAll);
 
 // retrieves details of a specific destination
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /destinations/{dest_id}:
  *   get:
  *     summary: Retrieve details about a specific destination
  *     tags: [Destinations]
@@ -57,26 +51,12 @@ destRoute.get('/', async (req, res) => {
  *       404:
  *         description: Destination not found
  */
-destRoute.get('/:destination_id', async (req, res) => {
-    const { destination_id } = req.params;
-    try {
-        const [destinations] = await mysqlPool.query('SELECT dest_name, dest_description, dest_price, dest_image_url FROM destinations WHERE destination_id = ?', [destination_id]);
-        const destination = destinations[0];
-        if (destination) {
-            res.json(destination);
-        } else {
-            res.status(404).json({ message: 'Destination not found' });
-        }
-    } catch (error) {
-        logger.error('Error fetching destination:', error);
-        res.status(500).send('Error fetching destination');
-    }
-});
+destRoute.get('/destinations/:dest_id', destinationController.getById);
 
 // updates a destination
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /destinations/{dest_id}:
  *   put:
  *     summary: Update details of a specific destination
  *     tags: [Destinations]
@@ -98,21 +78,7 @@ destRoute.get('/:destination_id', async (req, res) => {
  *       404:
  *         description: Destination not found
  */
-destRoute.put('/:destination_id', async (req, res) => {
-    const { dest_name, dest_description, dest_price, dest_image_url } = req.body;
-    const { destination_id } = req.params;
-    try {
-        const [result] = await mysqlPool.query('UPDATE destinations SET dest_name = ?, dest_description = ?, dest_price = ?, dest_image_url = ? WHERE destination_id = ?', [dest_name, dest_description, dest_price, dest_image_url, destination_id]);
-        if (result.affectedRows === 0) {
-            res.status(404).send('Destination not found');
-        } else {
-            res.status(200).send('Destination updated successfully');
-        }
-    } catch (error) {
-        logger.error('Error updating destination:', error);
-        res.status(500).send('Error updating destination');
-    }
-});
+destRoute.put('/destinations/:dest_id', destinationController.update);
 
 //schema for destinations
 /**
@@ -122,13 +88,13 @@ destRoute.put('/:destination_id', async (req, res) => {
  *     Destination:
  *       type: object
  *       required:
- *         - destination_id
+ *         - dest_id
  *         - name
  *         - description
  *         - image_url
  *         - price
  *       properties:
- *         destination_id:
+ *         dest_id:
  *           type: integer
  *           description: The auto-generated id of the destination
  *         name:

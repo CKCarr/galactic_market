@@ -1,8 +1,10 @@
-// /api/v1/health
-//         // Optionally include a database check or other critical checks
-
+// /api/v1/views/health
 import express from 'express';
 const healthRoute = express.Router();
+import { authMiddleware } from '../../../utils/authMiddleware.js';
+
+// Middleware to verify user authentication
+// healthRoute.use(authMiddleware);
 
 /**
  * @swagger
@@ -30,21 +32,21 @@ const healthRoute = express.Router();
  *               type: number
  *               description: The current timestamp
  */
-
 healthRoute.get('/health', (req, res) => {
-    // Perform necessary checks, such as database connectivity
-    const healthCheck = {
-        uptime: process.uptime(),
-        message: 'OK',
-        timestamp: Date.now()
-    };
-    try {
-        // Optionally include a database check or other critical checks
-        res.send(healthCheck);
-    } catch (e) {
-        healthCheck.message = e;
-        res.status(503).send(healthCheck);
-    }
+  // Perform necessary checks, such as database connectivity
+  const healthCheck = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now()
+  };
+  try {
+    // Return a response with a status code of 200
+    req.session.views = req.session.views ? req.session.views + 1 : 1;
+    res.status(200).send(healthCheck);
+  } catch (e) {
+    healthCheck.message = e.message || 'Internal Server Error';
+    res.status(503).send(healthCheck);
+  }
 });
 
 export default healthRoute;
