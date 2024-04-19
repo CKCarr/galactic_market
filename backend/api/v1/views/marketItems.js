@@ -1,9 +1,7 @@
 import express from 'express';
-import { createConnectPool, logger } from '../../../src/db.js';
 import marketItemController from '../controllers/marketItemController.js';
 
 const marketRoute = express.Router();
-const mysqlPool = createConnectPool();
 
 // GET all market items
 /**
@@ -22,18 +20,18 @@ const mysqlPool = createConnectPool();
  *               items:
  *                 $ref: '#/components/schemas/MarketItem'
  */
-marketRoute.get('/', marketItemController.getAll);
+marketRoute.get('/market-items', marketItemController.getAll);
 
 // GET a single market item by ID
 /**
  * @swagger
- * /market-items/{id}:
+ * /market-items/{mi_id}:
  *   get:
  *     summary: Retrieve a specific market item by ID
  *     tags: [Market Items]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: mi_id
  *         required: true
  *         schema:
  *           type: integer
@@ -48,7 +46,7 @@ marketRoute.get('/', marketItemController.getAll);
  *       404:
  *         description: Market item not found
  */
-marketRoute.get('/:id', marketItemController.getById);
+marketRoute.get('/market-items/:mi_id', marketItemController.getById);
 
 // POST a new market item
 /**
@@ -67,7 +65,7 @@ marketRoute.get('/:id', marketItemController.getById);
  *       201:
  *         description: Market item added successfully
  */
-marketRoute.post('/', marketItemController.add);
+marketRoute.post('/market-items', marketItemController.add);
 
 // PUT to update a market item
 /**
@@ -78,7 +76,7 @@ marketRoute.post('/', marketItemController.add);
  *     tags: [Market Items]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: mi_id
  *         required: true
  *         schema:
  *           type: integer
@@ -95,7 +93,7 @@ marketRoute.post('/', marketItemController.add);
  *       404:
  *         description: Market item not found
  */
-marketRoute.put('/:id', marketItemController.update);
+marketRoute.put('/market-items/:id', marketItemController.update);
 
 //schema for market items
 /**

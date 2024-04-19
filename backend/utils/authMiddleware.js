@@ -9,6 +9,7 @@ dotenv.config({ path: '../env/.env.app' });
 const authMiddleware = (req, res, next) => {
     const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
     req.user = null; // set user to null by default
+
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: Invalid Token" });
     }
@@ -24,9 +25,17 @@ const authMiddleware = (req, res, next) => {
 };
 
 const generateJWTToken = (userId, userName) => {
-    const token = jwt.sign({ id: userId, name: userName }, process.env.JWT_SECRET, {
-        expiresIn: '1h', // Token expires in 1 hour
-    });
+    const token = jwt.sign(
+        {
+            user_id: userId,
+            // Explicitly clear that this is the user's ID
+            username: userName
+            // User's name for potential display or logging purposes
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+        // Token automatically expires in 1 hour
+    );
     return token;
 };
 

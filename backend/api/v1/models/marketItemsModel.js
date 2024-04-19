@@ -7,6 +7,7 @@ const mysqlPool = createConnectPool();
 export async function getAllMarketItems() {
     try {
         const [items] = await mysqlPool.query('SELECT * FROM market_items');
+        logger.info('Market items retrieved successfully:', items);
         return items;
     } catch (err) {
         logger.error('Error fetching market items:', err);
@@ -16,8 +17,9 @@ export async function getAllMarketItems() {
 
 export async function getMarketItemById(itemId) {
     try {
-        const [item] = await mysqlPool.query('SELECT * FROM market_items WHERE market_item_id = ?', [itemId]);
-        return item[0] || null;
+        const [market_item] = await mysqlPool.query('SELECT mi_name, mi_description, mi_price, mi_image_url FROM market_items WHERE mi_id = ?', [itemId]);
+        logger.info('Market item retrieved successfully:', [market_item]);
+        return market_item[0] || null;
     } catch (err) {
         logger.error('Error fetching market item by ID:', err);
         throw err;
@@ -38,7 +40,7 @@ export async function addMarketItem(itemData) {
 export async function updateMarketItem(itemId, itemData) {
     const { mi_name, mi_description, mi_price } = itemData;
     try {
-        const [result] = await mysqlPool.query('UPDATE market_items SET mi_name = ?, mi_description = ?, mi_price = ? WHERE market_item_id = ?', [mi_name, mi_description, mi_price, itemId]);
+        const [result] = await mysqlPool.query('UPDATE market_items SET mi_name = ?, mi_description = ?, mi_price = ? WHERE mi_id = ?', [mi_name, mi_description, mi_price, itemId]);
         return result.affectedRows > 0;
     } catch (err) {
         logger.error('Error updating market item:', err);

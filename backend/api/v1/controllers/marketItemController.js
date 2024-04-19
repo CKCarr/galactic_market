@@ -14,13 +14,13 @@ const marketItemController = {
     },
 
     getById: async (req, res) => {
-        const { id } = req.params;
+        const mi_id = req.params.mi_id;
         try {
-            const item = await getMarketItemById(id);
-            if (item) {
-                res.json(item);
+            const market_items = await getMarketItemById(mi_id);
+            if (market_items) {
+                res.json(market_items);
             } else {
-                res.status(404).send('Market item not found');
+                res.status(404).json({ message: 'Market item not found' });
             }
         } catch (err) {
             logger.error('Error getting market item by ID:', err);

@@ -15,6 +15,7 @@ const router = express.Router();
  *         description: A welcome message.
  */
 router.get('/', (req, res) => {
+    logger.info('Welcome to the Galactic Destinations Market !!!');
     res.send('Welcome to the Galactic Destinations Market !!!');
 });
 

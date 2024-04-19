@@ -18,8 +18,7 @@ import { saveSession, sessionMiddleware } from '../utils/session_config.js';
 // Import the MySQL connection pool and winston logger
 import { createConnectPool, logger } from './db.js';
 // import swagger for API documentation
-import swaggerUI from 'swagger-ui-express';
-import swaggerSpecs from '../config/swagger/swaggerConfig.js';
+import { swaggerUi, swaggerSpec } from '../config/swagger/swaggerConfig.js';
 // import dotenv for environment variables
 import dotenv from 'dotenv';
 dotenv.config({ path: './env/.env.app' });
@@ -67,8 +66,8 @@ app.use(cookieParser());
 app.use(sessionMiddleware);
 app.use(saveSession);
 
-// swagger
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
+// Setup Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // home route
 app.use('/', router);
@@ -96,5 +95,6 @@ app.listen(PORT, HOST, () => {
     logger.info(`Server up and running! Listening on http://${HOST}:${PORT}`);
 });
 
-// swagger hosted at http//localhost:3000/api-docs
+// swagger hosted at
+// http//localhost:3000/api-docs
 // app.listen(PORT, HOST, () => {
