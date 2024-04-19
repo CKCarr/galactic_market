@@ -1,6 +1,6 @@
 -- This script initializes the database schema for the Galactic Market project.
 -- Check if the database exists or create it
-DROP DATABASE IF EXISTS mysql_galactic_db;
+-- DROP DATABASE IF EXISTS mysql_galactic_db;
 CREATE DATABASE IF NOT EXISTS mysql_galactic_db;
 
 -- -- Set passwords using environment variables
@@ -50,7 +50,6 @@ CREATE TABLE IF NOT EXISTS market_items (
     mi_image_url VARCHAR(255) -- Optional field for image URLs
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS cart;
 DROP TABLE IF EXISTS cart;
 CREATE TABLE IF NOT EXISTS cart (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
