@@ -73,19 +73,23 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 // home route
 app.use('/', router);
 
-// cart routes
-app.use('/', cartRoutes);
-// destination routes
-app.use('/', destRoute);
 // health routes
 app.use('/', healthRoute);
-// market items routes
-app.use('/', marketRoute);
 
 // session routes
 app.use('/', sessionRoute);
+
 // user routes
 app.use('/', userRoutes);
+
+// destination routes
+app.use('/', destRoute);
+
+// market items routes
+app.use('/', marketRoute);
+
+// cart routes
+app.use('/', cartRoutes);
 
 app.listen(PORT, HOST, () => {
     console.log('TO INFINITY AND BEYOND!!!!🚀🧑‍🚀👨‍🚀👩‍🚀🚀')
