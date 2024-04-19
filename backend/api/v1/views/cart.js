@@ -5,6 +5,7 @@
 import express from 'express';
 import cartController from '../controllers/cartController.js';
 import { authMiddleware }  from '../../../utils/authMiddleware.js';
+import { body, validationResult } from 'express-validator';
 
 const cartRoutes = express.Router();
 
@@ -20,18 +21,32 @@ const cartRoutes = express.Router();
 
 /**
  * @swagger
- * /cart:
+ * /cart/{userId}:
  *   get:
  *     summary: Retrieve a list of items in the cart
  *     tags: [Cart]
- *     description: List all items in the cart
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: User ID of the cart to retrieve
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A list of items in the cart
+ *         description: A list of items in the cart based on the authenticated user
+ *       401:
+ *         description: Unauthorized if the user is not logged in
+ *       403:
+ *         description: Forbidden if trying to access someone else's cart
  *       500:
  *         description: Database error
  */
-cartRoutes.get('/cart', cartController.getCartItems);
+
+cartRoutes.get('/cart/:userId', authMiddleware, cartController.getCartItemsByUser);
+
 /**
  * @swagger
  * /add:
@@ -46,10 +61,14 @@ cartRoutes.get('/cart', cartController.getCartItems);
  *           schema:
  *             type: object
  *             properties:
- *               item_name:
- *                 type: string
- *               item_price:
- *                 type: number
+ *               user_id:
+ *                 type: integer
+ *               item_id:
+ *                 type: integer
+ *               item_type:
+ *                type: string
+ *               quantity:
+ *                type: integer
  *     responses:
  *       201:
  *         description: Item added to the cart
@@ -58,15 +77,27 @@ cartRoutes.get('/cart', cartController.getCartItems);
  *       500:
  *         description: Database error
  */
-cartRoutes.post('/add', cartController.addItemToCart);
+cartRoutes.post('/add', [
+    body('user_id').isInt(),
+    body('item_id').isInt(),
+    body('item_type').isIn(['destinations', 'market_items']),
+    body('quantity').isInt({ min: 1 })
+], cartController.addCartItem);
 
 /**
  * @swagger
- * /update/:cartItemId:
+ * /update/{cartItemId}:
  *   put:
- *     summary: Add an item to the cart
+ *     summary: Update an item in the cart
  *     tags: [Cart]
- *     description: Add an item to the cart
+ *     description: Update an item in the cart
+ *     parameters:
+ *       - in: path
+ *         name: cartItemId
+ *         required: true
+ *         description: ID of the cart item to update
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -74,13 +105,11 @@ cartRoutes.post('/add', cartController.addItemToCart);
  *           schema:
  *             type: object
  *             properties:
- *               item_name:
- *                 type: string
- *               item_price:
- *                 type: number
+ *               quantity:
+ *                 type: integer
  *     responses:
- *       201:
- *         description: Item added to the cart
+ *       200:
+ *         description: Item updated successfully
  *       400:
  *         description: Invalid request body
  *       500:
@@ -90,29 +119,28 @@ cartRoutes.put('/update/:cartItemId', cartController.updateCartItem);
 
 /**
  * @swagger
- * /cart/remove/:cartItemId:
+ * /cart/remove/{cart_Id}:
  *   delete:
  *     summary: Remove an item from the cart
  *     tags: [Cart]
- *     description: Remove an item from the cart
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - item_name
- *             properties:
- *               item_name:
- *                 type: string
+ *     description: Remove an item from the cart by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: cart_Id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: The ID of the cart item to remove.
  *     responses:
  *       200:
  *         description: Item removed from the cart
+ *       400:
+ *         description: Invalid request or cart item not found
  *       500:
  *         description: Database error
  */
-cartRoutes.delete('cart/remove/:cartItemId', cartController.removeItemFromCart);
+cartRoutes.delete('/cart/remove/:cart_Id', cartController.removeItemFromCart);
+
 
 /**
  * @swagger
@@ -120,14 +148,18 @@ cartRoutes.delete('cart/remove/:cartItemId', cartController.removeItemFromCart);
  *   get:
  *     summary: Calculate total price for checkout
  *     tags: [Cart]
- *     description: Calculate the total price of items in the cart for checkout
+ *     description: Authenticate and calculate the total price of items in the cart for checkout.
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Total price for checkout
+ *       401:
+ *         description: Unauthorized if the user is not logged in
  *       500:
  *         description: Database error
  */
-cartRoutes.get('/checkout', cartController.calculateTotal);
+cartRoutes.get('/checkout', authMiddleware, cartController.calculateTotal);
 
 /**
  * @swagger
@@ -162,4 +194,5 @@ cartRoutes.delete('/clear', cartController.clearCart);
  *           type: number
  *           description: The price of the item in the cart
  */
+
 export default cartRoutes;

@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS cart (
     market_item_id INT,
     item_type ENUM('destinations', 'market_items'),
     quantity INT,
+    item_price DECIMAL(10, 2),
+    total DECIMAL(10, 2) DEFAULT 0,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (destination_id) REFERENCES destinations(dest_id) ON DELETE CASCADE,
